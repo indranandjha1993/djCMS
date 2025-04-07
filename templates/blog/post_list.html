@@ -3,55 +3,84 @@
 {% block title %}Blog{% endblock %}
 
 {% block content %}
-<div class="max-w-container mx-auto px-4 py-8">
-    <header class="mb-8">
-        <h1 class="text-3xl font-bold mb-2">Blog</h1>
-        <p class="text-gray-600">Latest articles and updates</p>
+<div class="max-w-container mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <header class="mb-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold font-heading mb-4 animate-fade-in">Our Blog</h1>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto animate-slide-up">Discover the latest insights, tutorials, and updates from our team</p>
+        
+        <!-- Search Form -->
+        <div class="mt-8 max-w-md mx-auto">
+            <form action="{% url 'search:search' %}" method="get" class="flex shadow-soft rounded-xl overflow-hidden">
+                <input type="text" name="q" placeholder="Search articles..." 
+                       class="w-full px-6 py-3 border-0 focus:outline-none focus:ring-2 focus:ring-primary">
+                <button type="submit" class="btn-primary px-6">
+                    <i class="fas fa-search mr-2"></i>
+                    Search
+                </button>
+            </form>
+        </div>
     </header>
     
     {% if featured_posts %}
-        <div class="mb-12">
-            <h2 class="text-2xl font-bold mb-6">Featured Posts</h2>
+        <div class="mb-16">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold font-heading">Featured Posts</h2>
+                <a href="#all-posts" class="text-primary hover:underline flex items-center">
+                    View all posts
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {% for post in featured_posts %}
-                    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                    <div class="card card-hover animate-scale overflow-hidden">
                         {% if post.featured_image %}
-                            <a href="{{ post.get_absolute_url }}">
-                                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                            <a href="{{ post.get_absolute_url }}" class="block overflow-hidden">
+                                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-52 object-cover transition-transform duration-500 hover:scale-110">
                             </a>
                         {% endif %}
                         
                         <div class="p-6">
-                            <div class="flex items-center text-sm text-gray-500 mb-2">
-                                <span>{{ post.published_at|date:"F j, Y" }}</span>
-                                <span class="mx-2">•</span>
-                                <a href="{% url 'blog:author_post_list' post.author.username %}" class="hover:text-primary transition-colors">
-                                    {{ post.author.display_name }}
-                                </a>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                {% for category in post.categories.all %}
+                                    <a href="{% url 'blog:category_post_list' category.slug %}" class="bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-full text-xs font-medium transition-colors hover:bg-opacity-20">
+                                        {{ category.name }}
+                                    </a>
+                                {% endfor %}
                             </div>
                             
-                            <h3 class="text-xl font-bold mb-2">
+                            <h3 class="text-xl font-bold mb-3">
                                 <a href="{{ post.get_absolute_url }}" class="hover:text-primary transition-colors">
                                     {{ post.title }}
                                 </a>
                             </h3>
                             
                             {% if post.excerpt %}
-                                <p class="text-gray-600 mb-4">{{ post.excerpt|truncatewords:20 }}</p>
+                                <p class="text-gray-600 mb-4">{{ post.excerpt|truncatewords:15 }}</p>
                             {% endif %}
                             
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                {% for category in post.categories.all %}
-                                    <a href="{% url 'blog:category_post_list' category.slug %}" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs transition-colors">
-                                        {{ category.name }}
-                                    </a>
-                                {% endfor %}
+                            <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                                <div class="flex items-center">
+                                    {% if post.author.avatar %}
+                                        <img src="{{ post.author.avatar.url }}" alt="{{ post.author.display_name }}" class="w-8 h-8 rounded-full mr-2 object-cover">
+                                    {% else %}
+                                        <div class="w-8 h-8 rounded-full gradient-bg text-white flex items-center justify-center mr-2">
+                                            {{ post.author.username|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <a href="{% url 'blog:author_post_list' post.author.username %}" class="text-sm font-medium hover:text-primary transition-colors">
+                                            {{ post.author.display_name }}
+                                        </a>
+                                        <div class="text-xs text-gray-500">{{ post.published_at|date:"F j, Y" }}</div>
+                                    </div>
+                                </div>
+                                
+                                <a href="{{ post.get_absolute_url }}" class="text-primary hover:underline text-sm font-medium">
+                                    Read more
+                                </a>
                             </div>
-                            
-                            <a href="{{ post.get_absolute_url }}" class="text-primary hover:underline">
-                                Read more
-                            </a>
                         </div>
                     </div>
                 {% endfor %}
@@ -59,86 +88,106 @@
         </div>
     {% endif %}
     
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div id="all-posts" class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div class="md:col-span-2">
-            <h2 class="text-2xl font-bold mb-6">Latest Posts</h2>
+            <h2 class="text-3xl font-bold font-heading mb-8">Latest Articles</h2>
             
             {% if posts %}
-                <div class="space-y-8">
+                <div class="space-y-10">
                     {% for post in posts %}
-                        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                        <article class="card card-hover animate-scale">
                             <div class="md:flex">
                                 {% if post.featured_image %}
-                                    <div class="md:w-1/3">
-                                        <a href="{{ post.get_absolute_url }}">
-                                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 md:h-full object-cover">
+                                    <div class="md:w-2/5 overflow-hidden">
+                                        <a href="{{ post.get_absolute_url }}" class="block">
+                                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-56 md:h-full object-cover transition-transform duration-500 hover:scale-110">
                                         </a>
                                     </div>
                                 {% endif %}
                                 
-                                <div class="p-6 {% if post.featured_image %}md:w-2/3{% endif %}">
-                                    <div class="flex items-center text-sm text-gray-500 mb-2">
-                                        <span>{{ post.published_at|date:"F j, Y" }}</span>
-                                        <span class="mx-2">•</span>
-                                        <a href="{% url 'blog:author_post_list' post.author.username %}" class="hover:text-primary transition-colors">
-                                            {{ post.author.display_name }}
-                                        </a>
+                                <div class="p-6 {% if post.featured_image %}md:w-3/5{% endif %}">
+                                    <div class="flex flex-wrap gap-2 mb-3">
+                                        {% for category in post.categories.all %}
+                                            <a href="{% url 'blog:category_post_list' category.slug %}" class="bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-full text-xs font-medium transition-colors hover:bg-opacity-20">
+                                                {{ category.name }}
+                                            </a>
+                                        {% endfor %}
                                     </div>
                                     
-                                    <h3 class="text-xl font-bold mb-2">
+                                    <h3 class="text-xl font-bold mb-3">
                                         <a href="{{ post.get_absolute_url }}" class="hover:text-primary transition-colors">
                                             {{ post.title }}
                                         </a>
                                     </h3>
                                     
                                     {% if post.excerpt %}
-                                        <p class="text-gray-600 mb-4">{{ post.excerpt|truncatewords:30 }}</p>
+                                        <p class="text-gray-600 mb-4">{{ post.excerpt|truncatewords:25 }}</p>
                                     {% endif %}
                                     
-                                    <div class="flex flex-wrap gap-2 mb-4">
-                                        {% for category in post.categories.all %}
-                                            <a href="{% url 'blog:category_post_list' category.slug %}" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs transition-colors">
-                                                {{ category.name }}
-                                            </a>
-                                        {% endfor %}
+                                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                                        <div class="flex items-center">
+                                            {% if post.author.avatar %}
+                                                <img src="{{ post.author.avatar.url }}" alt="{{ post.author.display_name }}" class="w-8 h-8 rounded-full mr-2 object-cover">
+                                            {% else %}
+                                                <div class="w-8 h-8 rounded-full gradient-bg text-white flex items-center justify-center mr-2">
+                                                    {{ post.author.username|first|upper }}
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <a href="{% url 'blog:author_post_list' post.author.username %}" class="text-sm font-medium hover:text-primary transition-colors">
+                                                    {{ post.author.display_name }}
+                                                </a>
+                                                <div class="text-xs text-gray-500">{{ post.published_at|date:"F j, Y" }}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <a href="{{ post.get_absolute_url }}" class="btn btn-outline text-sm">
+                                            Read article
+                                            <i class="fas fa-arrow-right ml-2"></i>
+                                        </a>
                                     </div>
-                                    
-                                    <a href="{{ post.get_absolute_url }}" class="text-primary hover:underline">
-                                        Read more
-                                    </a>
                                 </div>
                             </div>
-                        </div>
+                        </article>
                     {% endfor %}
                 </div>
                 
                 {% if is_paginated %}
-                    <div class="mt-8 flex justify-center">
-                        <nav class="inline-flex rounded-md shadow">
+                    <div class="mt-12 flex justify-center">
+                        <nav class="inline-flex rounded-xl overflow-hidden shadow-soft">
                             {% if page_obj.has_previous %}
-                                <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                <a href="?page={{ page_obj.previous_page_number }}" class="px-5 py-3 bg-white text-gray-700 hover:bg-gray-50 font-medium flex items-center transition-colors">
+                                    <i class="fas fa-chevron-left mr-2"></i>
                                     Previous
                                 </a>
                             {% endif %}
                             
-                            <span class="px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            <span class="px-5 py-3 bg-primary text-white font-medium">
+                                {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
                             </span>
                             
                             {% if page_obj.has_next %}
-                                <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                <a href="?page={{ page_obj.next_page_number }}" class="px-5 py-3 bg-white text-gray-700 hover:bg-gray-50 font-medium flex items-center transition-colors">
                                     Next
+                                    <i class="fas fa-chevron-right ml-2"></i>
                                 </a>
                             {% endif %}
                         </nav>
                     </div>
                 {% endif %}
             {% else %}
-                <div class="bg-white shadow-sm rounded-lg p-8 text-center">
-                    <h3 class="text-xl font-bold mb-2">No posts found</h3>
-                    <p class="text-gray-600">
+                <div class="card p-12 text-center">
+                    <div class="text-6xl text-gray-300 mb-4">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">No posts found</h3>
+                    <p class="text-gray-600 mb-6">
                         There are no blog posts available at the moment. Please check back later.
                     </p>
+                    <a href="{% url 'pages:home' %}" class="btn btn-primary">
+                        <i class="fas fa-home mr-2"></i>
+                        Back to Home
+                    </a>
                 </div>
             {% endif %}
         </div>
@@ -149,16 +198,45 @@
             
             {% if not widgets %}
                 <aside>
-                    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Categories</h3>
+                    <!-- Author Profile -->
+                    <div class="card p-6 mb-8 text-center">
+                        <div class="w-20 h-20 rounded-full gradient-bg text-white flex items-center justify-center text-2xl mx-auto mb-4">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">About the Blog</h3>
+                        <p class="text-gray-600 mb-4">
+                            Welcome to our blog where we share insights, tutorials, and updates about our CMS platform.
+                        </p>
+                        <div class="flex justify-center space-x-3">
+                            <a href="#" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white flex items-center justify-center transition-colors">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white flex items-center justify-center transition-colors">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white flex items-center justify-center transition-colors">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Categories -->
+                    <div class="card p-6 mb-8">
+                        <h3 class="text-xl font-bold mb-6 flex items-center">
+                            <i class="fas fa-folder mr-2 text-primary"></i>
+                            Categories
+                        </h3>
                         
                         {% if popular_categories %}
-                            <ul class="space-y-2">
+                            <ul class="space-y-3">
                                 {% for category in popular_categories %}
                                     <li>
-                                        <a href="{% url 'blog:category_post_list' category.slug %}" class="flex justify-between items-center py-2 hover:text-primary transition-colors">
-                                            <span>{{ category.name }}</span>
-                                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">
+                                        <a href="{% url 'blog:category_post_list' category.slug %}" class="flex justify-between items-center py-2 hover:text-primary transition-colors group">
+                                            <span class="flex items-center">
+                                                <i class="fas fa-chevron-right text-xs mr-2 text-primary opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                {{ category.name }}
+                                            </span>
+                                            <span class="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-full text-xs font-medium">
                                                 {{ category.post_count }}
                                             </span>
                                         </a>
@@ -170,14 +248,24 @@
                         {% endif %}
                     </div>
                     
-                    <div class="bg-white shadow-sm rounded-lg p-6">
-                        <h3 class="text-lg font-semibold mb-4">Tags</h3>
+                    <!-- Tags -->
+                    <div class="card p-6 mb-8">
+                        <h3 class="text-xl font-bold mb-6 flex items-center">
+                            <i class="fas fa-tags mr-2 text-primary"></i>
+                            Popular Tags
+                        </h3>
                         
                         {% load pages_tags %}
                         {% show_popular_tags 15 %}
                     </div>
                     
-                    <div class="mt-6">
+                    <!-- Newsletter -->
+                    <div class="card p-6 gradient-bg text-white">
+                        <h3 class="text-xl font-bold mb-4">Subscribe to Newsletter</h3>
+                        <p class="mb-6 text-white text-opacity-90">
+                            Get the latest posts and updates delivered straight to your inbox.
+                        </p>
+                        
                         {% load newsletter_tags %}
                         {% newsletter_subscribe_form %}
                     </div>

@@ -20,6 +20,14 @@
     <!-- Favicon -->
     {% if theme.favicon %}<link rel="icon" href="{{ theme.favicon.url }}">{% endif %}
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,17 +35,33 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "{{ theme.primary_color|default:'#3490dc' }}",
-                        secondary: "{{ theme.secondary_color|default:'#ffed4a' }}",
-                        accent: "{{ theme.accent_color|default:'#f66d9b' }}",
+                        primary: "{{ theme.primary_color|default:'#4F46E5' }}",
+                        secondary: "{{ theme.secondary_color|default:'#10B981' }}",
+                        accent: "{{ theme.accent_color|default:'#F43F5E' }}",
+                        dark: "#1E293B",
+                        light: "#F8FAFC",
+                        muted: "#94A3B8",
                     },
                     fontFamily: {
-                        sans: ["{{ theme.font_family|default:'Inter, sans-serif' }}", 'sans-serif'],
-                        {% if theme.heading_font_family %}heading: ["{{ theme.heading_font_family }}", 'sans-serif'],{% endif %}
+                        sans: ["{{ theme.font_family|default:'Inter' }}", 'sans-serif'],
+                        heading: ["{{ theme.heading_font_family|default:'Playfair Display' }}", 'serif'],
                     },
                     maxWidth: {
                         container: "{{ theme.container_width|default:'1200px' }}",
-                    }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
+                        'elevated': '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02)',
+                    },
+                    transitionProperty: {
+                        'height': 'height',
+                        'spacing': 'margin, padding',
+                    },
+                    borderRadius: {
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                    },
                 }
             }
         }
@@ -45,6 +69,80 @@
     
     <!-- Custom CSS -->
     <style>
+        /* Global styles */
+        body {
+            background-color: #F8FAFC;
+            color: #1E293B;
+            scroll-behavior: smooth;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Animations */
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-in-out;
+        }
+        
+        .animate-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .animate-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Custom components */
+        .btn {
+            @apply px-4 py-2 rounded-md font-medium transition-all duration-200 inline-flex items-center justify-center;
+        }
+        
+        .btn-primary {
+            @apply bg-primary text-white hover:bg-opacity-90;
+        }
+        
+        .btn-secondary {
+            @apply bg-secondary text-white hover:bg-opacity-90;
+        }
+        
+        .btn-outline {
+            @apply border border-primary text-primary hover:bg-primary hover:text-white;
+        }
+        
+        .card {
+            @apply bg-white rounded-xl shadow-card transition-all duration-200;
+        }
+        
+        .card-hover {
+            @apply hover:shadow-elevated;
+        }
+        
+        /* Custom utilities */
+        .gradient-bg {
+            background: linear-gradient(135deg, #4F46E5 0%, #10B981 100%);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #4F46E5 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
         {% if theme.custom_css %}{{ theme.custom_css|safe }}{% endif %}
     </style>
     
@@ -52,39 +150,41 @@
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
     <!-- Header -->
-    <header class="bg-white shadow-sm">
-        <div class="max-w-container mx-auto px-4 py-4">
+    <header class="bg-white shadow-card sticky top-0 z-50">
+        <div class="max-w-container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
                     {% if theme.logo %}
-                        <a href="{% url 'pages:home' %}" class="block">
-                            <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-10">
+                        <a href="{% url 'pages:home' %}" class="block transition-transform duration-300 hover:scale-105">
+                            <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-12">
                         </a>
                     {% else %}
-                        <a href="{% url 'pages:home' %}" class="text-2xl font-bold text-primary">djCMS</a>
+                        <a href="{% url 'pages:home' %}" class="text-2xl font-bold font-heading text-gradient">
+                            djCMS
+                        </a>
                     {% endif %}
                 </div>
                 
                 <!-- Main Navigation -->
                 <nav class="hidden md:block">
-                    <ul class="flex space-x-6">
+                    <ul class="flex space-x-8">
                         {% if header_menu %}
                             {% for item in header_menu.items.all %}
                                 {% if not item.parent %}
                                     <li class="relative group">
                                         <a href="{{ item.get_url }}" 
-                                           class="py-2 hover:text-primary transition-colors"
+                                           class="py-2 font-medium hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full"
                                            {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
                                             {{ item.title }}
                                         </a>
                                         
                                         {% with children=item.children.all %}
                                             {% if children %}
-                                                <ul class="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-10 hidden group-hover:block">
+                                                <ul class="absolute left-0 mt-2 w-56 bg-white shadow-elevated rounded-xl py-2 z-10 hidden group-hover:block animate-fade-in">
                                                     {% for child in children %}
                                                         <li>
                                                             <a href="{{ child.get_url }}" 
-                                                               class="block px-4 py-2 hover:bg-gray-100 transition-colors"
+                                                               class="block px-4 py-2 hover:bg-gray-50 hover:text-primary transition-colors"
                                                                {% if child.target_blank %}target="_blank" rel="noopener"{% endif %}>
                                                                 {{ child.title }}
                                                             </a>
@@ -97,13 +197,13 @@
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
-                        <li>
-                            <a href="{% url 'blog:post_list' %}" class="py-2 hover:text-primary transition-colors">
+                        <li class="relative group">
+                            <a href="{% url 'blog:post_list' %}" class="py-2 font-medium hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
                                 Blog
                             </a>
                         </li>
-                        <li>
-                            <a href="{% url 'core:contact' %}" class="py-2 hover:text-primary transition-colors">
+                        <li class="relative group">
+                            <a href="{% url 'core:contact' %}" class="py-2 font-medium hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
                                 Contact
                             </a>
                         </li>
@@ -114,11 +214,9 @@
                 <div class="hidden md:block ml-6">
                     <form action="{% url 'search:search' %}" method="get" class="flex">
                         <input type="text" name="q" placeholder="Search..." 
-                               class="w-40 px-3 py-1 border border-gray-300 rounded-l-md focus:outline-none focus:ring-primary focus:border-primary">
-                        <button type="submit" class="bg-primary text-white px-3 py-1 rounded-r-md hover:bg-opacity-90 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                               class="w-48 px-4 py-2 border border-gray-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
+                        <button type="submit" class="btn-primary rounded-r-xl rounded-l-none">
+                            <i class="fas fa-search text-sm"></i>
                         </button>
                     </form>
                 </div>
@@ -127,81 +225,86 @@
                 <div class="hidden md:flex items-center ml-6">
                     {% if user.is_authenticated %}
                         <div class="relative group">
-                            <button class="flex items-center space-x-2 focus:outline-none">
+                            <button class="flex items-center space-x-2 focus:outline-none bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-xl transition-colors">
                                 {% if user.avatar %}
-                                    <img src="{{ user.avatar.url }}" alt="{{ user.display_name }}" class="w-8 h-8 rounded-full object-cover">
+                                    <img src="{{ user.avatar.url }}" alt="{{ user.display_name }}" class="w-8 h-8 rounded-full object-cover border-2 border-primary">
                                 {% else %}
-                                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
+                                    <div class="w-8 h-8 rounded-full gradient-bg text-white flex items-center justify-center">
                                         {{ user.username|first|upper }}
                                     </div>
                                 {% endif %}
-                                <span>{{ user.display_name }}</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
+                                <span class="font-medium">{{ user.display_name }}</span>
+                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
                             </button>
                             
-                            <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-10 hidden group-hover:block">
-                                <a href="{% url 'core:profile' %}" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+                            <div class="absolute right-0 mt-2 w-56 bg-white shadow-elevated rounded-xl py-2 z-10 hidden group-hover:block animate-fade-in">
+                                <a href="{% url 'core:profile' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-user-circle mr-2 text-primary"></i>
                                     Profile
                                 </a>
-                                <a href="{% url 'blog:author_dashboard' %}" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+                                <a href="{% url 'blog:author_dashboard' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-pen-fancy mr-2 text-primary"></i>
                                     Author Dashboard
                                 </a>
                                 {% if user.is_staff %}
-                                    <a href="{% url 'admin:index' %}" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+                                    <a href="{% url 'admin:index' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors">
+                                        <i class="fas fa-cog mr-2 text-primary"></i>
                                         Admin
                                     </a>
                                 {% endif %}
-                                <a href="{% url 'core:logout' %}" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <a href="{% url 'core:logout' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-sign-out-alt mr-2 text-primary"></i>
                                     Log Out
                                 </a>
                             </div>
                         </div>
                     {% else %}
-                        <a href="{% url 'core:login' %}" class="text-gray-600 hover:text-primary transition-colors">
+                        <a href="{% url 'core:login' %}" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
                             Log In
                         </a>
                     {% endif %}
                 </div>
                 
                 <!-- Mobile Menu Button -->
-                <button class="md:hidden" id="mobile-menu-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
+                <button class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" id="mobile-menu-button">
+                    <i class="fas fa-bars text-xl"></i>
                 </button>
             </div>
             
             <!-- Mobile Navigation -->
-            <div class="md:hidden hidden" id="mobile-menu">
+            <div class="md:hidden hidden animate-fade-in" id="mobile-menu">
                 <!-- Mobile Search Form -->
                 <div class="mb-4 mt-4">
                     <form action="{% url 'search:search' %}" method="get" class="flex">
                         <input type="text" name="q" placeholder="Search..." 
-                               class="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-primary focus:border-primary">
-                        <button type="submit" class="bg-primary text-white px-3 py-2 rounded-r-md hover:bg-opacity-90 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                               class="flex-grow px-4 py-2 border border-gray-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <button type="submit" class="btn-primary rounded-r-xl rounded-l-none">
+                            <i class="fas fa-search"></i>
                         </button>
                     </form>
                 </div>
                 
-                <ul class="space-y-2">
+                <ul class="space-y-3 pb-4">
                     {% if header_menu %}
                         {% for item in header_menu.items.all %}
                             {% if not item.parent %}
                                 <li>
                                     <a href="{{ item.get_url }}" 
-                                       class="block py-2 hover:text-primary transition-colors"
+                                       class="flex justify-between items-center py-2 font-medium hover:text-primary transition-colors"
                                        {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
                                         {{ item.title }}
+                                        {% with children=item.children.all %}
+                                            {% if children %}
+                                                <i class="fas fa-chevron-right text-xs text-gray-400"></i>
+                                            {% endif %}
+                                        {% endwith %}
                                     </a>
                                     
                                     {% with children=item.children.all %}
                                         {% if children %}
-                                            <ul class="pl-4 mt-1 space-y-1">
+                                            <ul class="pl-4 mt-2 space-y-2 border-l-2 border-gray-100">
                                                 {% for child in children %}
                                                     <li>
                                                         <a href="{{ child.get_url }}" 
@@ -219,12 +322,12 @@
                         {% endfor %}
                     {% endif %}
                     <li>
-                        <a href="{% url 'blog:post_list' %}" class="block py-2 hover:text-primary transition-colors">
+                        <a href="{% url 'blog:post_list' %}" class="block py-2 font-medium hover:text-primary transition-colors">
                             Blog
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'core:contact' %}" class="block py-2 hover:text-primary transition-colors">
+                        <a href="{% url 'core:contact' %}" class="block py-2 font-medium hover:text-primary transition-colors">
                             Contact
                         </a>
                     </li>
@@ -232,22 +335,37 @@
                     <!-- Mobile User Menu -->
                     <li class="border-t border-gray-200 mt-4 pt-4">
                         {% if user.is_authenticated %}
-                            <a href="{% url 'core:profile' %}" class="block py-2 hover:text-primary transition-colors">
+                            <div class="flex items-center mb-4">
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar.url }}" alt="{{ user.display_name }}" class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+                                {% else %}
+                                    <div class="w-10 h-10 rounded-full gradient-bg text-white flex items-center justify-center">
+                                        {{ user.username|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <span class="ml-3 font-medium">{{ user.display_name }}</span>
+                            </div>
+                            <a href="{% url 'core:profile' %}" class="flex items-center py-2 hover:text-primary transition-colors">
+                                <i class="fas fa-user-circle mr-2 text-primary"></i>
                                 Profile
                             </a>
-                            <a href="{% url 'blog:author_dashboard' %}" class="block py-2 hover:text-primary transition-colors">
+                            <a href="{% url 'blog:author_dashboard' %}" class="flex items-center py-2 hover:text-primary transition-colors">
+                                <i class="fas fa-pen-fancy mr-2 text-primary"></i>
                                 Author Dashboard
                             </a>
                             {% if user.is_staff %}
-                                <a href="{% url 'admin:index' %}" class="block py-2 hover:text-primary transition-colors">
+                                <a href="{% url 'admin:index' %}" class="flex items-center py-2 hover:text-primary transition-colors">
+                                    <i class="fas fa-cog mr-2 text-primary"></i>
                                     Admin
                                 </a>
                             {% endif %}
-                            <a href="{% url 'core:logout' %}" class="block py-2 hover:text-primary transition-colors">
+                            <a href="{% url 'core:logout' %}" class="flex items-center py-2 hover:text-primary transition-colors">
+                                <i class="fas fa-sign-out-alt mr-2 text-primary"></i>
                                 Log Out
                             </a>
                         {% else %}
-                            <a href="{% url 'core:login' %}" class="block py-2 hover:text-primary transition-colors">
+                            <a href="{% url 'core:login' %}" class="btn btn-primary w-full justify-center">
+                                <i class="fas fa-sign-in-alt mr-2"></i>
                                 Log In
                             </a>
                         {% endif %}
@@ -263,36 +381,76 @@
     </main>
     
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-12">
+    <footer class="bg-dark text-white py-16 mt-16">
         <div class="max-w-container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-1">
                     {% load widget_tags %}
                     {% with template_name="widgets/footer_widget.html" %}
                         {% show_widget_area 'footer-left' %}
                     {% endwith %}
                     
                     {% if not widgets %}
-                        <h3 class="text-xl font-bold mb-4">About</h3>
-                        <p class="text-gray-300">A flexible CMS platform built with Django and Tailwind CSS.</p>
+                        <div class="mb-6">
+                            {% if theme.logo %}
+                                <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-10 mb-4">
+                            {% else %}
+                                <h2 class="text-2xl font-bold font-heading text-gradient mb-4">djCMS</h2>
+                            {% endif %}
+                            <p class="text-gray-300">A flexible CMS platform built with Django and Tailwind CSS.</p>
+                        </div>
+                        
+                        <div class="flex space-x-4 mt-6">
+                            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-primary flex items-center justify-center transition-colors">
+                                <i class="fab fa-twitter text-white"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-primary flex items-center justify-center transition-colors">
+                                <i class="fab fa-facebook-f text-white"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-primary flex items-center justify-center transition-colors">
+                                <i class="fab fa-instagram text-white"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-primary flex items-center justify-center transition-colors">
+                                <i class="fab fa-github text-white"></i>
+                            </a>
+                        </div>
                     {% endif %}
                 </div>
                 
-                <div>
+                <div class="md:col-span-1">
                     {% with template_name="widgets/footer_widget.html" %}
-                        {% show_widget_area 'footer-center' %}
+                        {% show_widget_area 'footer-center-left' %}
                     {% endwith %}
                     
                     {% if not widgets %}
-                        <h3 class="text-xl font-bold mb-4">Links</h3>
-                        <ul class="space-y-2">
+                        <h3 class="text-xl font-bold font-heading mb-6">Quick Links</h3>
+                        <ul class="space-y-3">
+                            <li>
+                                <a href="{% url 'pages:home' %}" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
+                                    Home
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'blog:post_list' %}" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
+                                    Blog
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'core:contact' %}" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
+                                    Contact
+                                </a>
+                            </li>
                             {% if footer_menu %}
                                 {% for item in footer_menu.items.all %}
-                                    {% if not item.parent %}
+                                    {% if not item.parent and forloop.counter <= 3 %}
                                         <li>
                                             <a href="{{ item.get_url }}" 
-                                               class="text-gray-300 hover:text-white transition-colors"
+                                               class="text-gray-300 hover:text-white transition-colors flex items-center"
                                                {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
                                                 {{ item.title }}
                                             </a>
                                         </li>
@@ -303,32 +461,154 @@
                     {% endif %}
                 </div>
                 
-                <div>
+                <div class="md:col-span-1">
+                    {% with template_name="widgets/footer_widget.html" %}
+                        {% show_widget_area 'footer-center-right' %}
+                    {% endwith %}
+                    
+                    {% if not widgets %}
+                        <h3 class="text-xl font-bold font-heading mb-6">Resources</h3>
+                        <ul class="space-y-3">
+                            {% if footer_menu %}
+                                {% for item in footer_menu.items.all %}
+                                    {% if not item.parent and forloop.counter > 3 %}
+                                        <li>
+                                            <a href="{{ item.get_url }}" 
+                                               class="text-gray-300 hover:text-white transition-colors flex items-center"
+                                               {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
+                                                {{ item.title }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <li>
+                                    <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
+                                        Documentation
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
+                                        Tutorials
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
+                                        API Reference
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
+                                        Support
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </div>
+                
+                <div class="md:col-span-1">
                     {% with template_name="widgets/footer_widget.html" %}
                         {% show_widget_area 'footer-right' %}
                     {% endwith %}
                     
                     {% if not widgets %}
-                        <h3 class="text-xl font-bold mb-4">Contact</h3>
-                        <p class="text-gray-300 mb-2">Email: info@example.com</p>
-                        <a href="{% url 'core:contact' %}" class="text-gray-300 hover:text-white transition-colors">
-                            Contact Us
-                        </a>
+                        <h3 class="text-xl font-bold font-heading mb-6">Contact Us</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i>
+                                <span class="text-gray-300">123 Street Name, City, Country</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-envelope mr-3 text-primary"></i>
+                                <a href="mailto:info@example.com" class="text-gray-300 hover:text-white transition-colors">info@example.com</a>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-phone-alt mr-3 text-primary"></i>
+                                <a href="tel:+1234567890" class="text-gray-300 hover:text-white transition-colors">+1 (234) 567-890</a>
+                            </li>
+                        </ul>
+                        
+                        <div class="mt-6">
+                            <h4 class="font-bold mb-3">Subscribe to Newsletter</h4>
+                            <form class="flex">
+                                <input type="email" placeholder="Your email" class="flex-grow px-4 py-2 rounded-l-lg focus:outline-none">
+                                <button type="submit" class="btn-primary rounded-r-lg rounded-l-none">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
                     {% endif %}
                 </div>
             </div>
             
-            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+            <div class="mt-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center text-gray-400">
                 <p>&copy; {% now "Y" %} djCMS. All rights reserved.</p>
+                <div class="mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white mx-2 transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white mx-2 transition-colors">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-white mx-2 transition-colors">Cookie Policy</a>
+                </div>
             </div>
         </div>
     </footer>
     
     <!-- Custom JavaScript -->
     <script>
-        // Mobile menu toggle
+        // Mobile menu toggle with animation
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+            
+            // Toggle icon between bars and X
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // Add scroll effects
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            const scrollTop = window.scrollY;
+            
+            // Add shadow and reduce padding on scroll
+            if (scrollTop > 10) {
+                header.classList.add('py-2');
+                header.classList.remove('py-3');
+                header.classList.add('shadow-elevated');
+            } else {
+                header.classList.remove('py-2');
+                header.classList.add('py-3');
+                header.classList.remove('shadow-elevated');
+            }
+        });
+        
+        // Animate elements when they come into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateElements = document.querySelectorAll('.card, .btn, h1, h2, h3');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animateElements.forEach(element => {
+                observer.observe(element);
+            });
         });
         
         {% if theme.custom_js %}{{ theme.custom_js|safe }}{% endif %}

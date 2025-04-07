@@ -1,0 +1,35 @@
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {% for post in posts %}
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+            {% if post.featured_image %}
+                <a href="{{ post.get_absolute_url }}">
+                    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                </a>
+            {% endif %}
+            
+            <div class="p-6">
+                <div class="flex items-center text-sm text-gray-500 mb-2">
+                    <span>{{ post.published_at|date:"F j, Y" }}</span>
+                </div>
+                
+                <h3 class="text-xl font-bold mb-2">
+                    <a href="{{ post.get_absolute_url }}" class="hover:text-primary transition-colors">
+                        {{ post.title }}
+                    </a>
+                </h3>
+                
+                {% if post.excerpt %}
+                    <p class="text-gray-600 mb-4">{{ post.excerpt|truncatewords:20 }}</p>
+                {% endif %}
+                
+                <a href="{{ post.get_absolute_url }}" class="text-primary hover:underline">
+                    Read more
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-span-3">
+            <p class="text-gray-500">No featured posts found.</p>
+        </div>
+    {% endfor %}
+</div>

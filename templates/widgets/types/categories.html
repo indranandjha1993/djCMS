@@ -1,0 +1,22 @@
+<div class="widget widget-categories bg-white shadow-sm rounded-lg p-6 mb-6">
+    {% if widget.title %}
+        <h3 class="text-lg font-semibold mb-4">{{ widget.title }}</h3>
+    {% endif %}
+    
+    {% if categories %}
+        <ul class="space-y-2">
+            {% for category in categories %}
+                <li>
+                    <a href="{% url 'blog:category_post_list' category.slug %}" class="flex justify-between items-center py-2 hover:text-primary transition-colors">
+                        <span>{{ category.name }}</span>
+                        <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">
+                            {{ category.post_count }}
+                        </span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-gray-500">No categories found.</p>
+    {% endif %}
+</div>

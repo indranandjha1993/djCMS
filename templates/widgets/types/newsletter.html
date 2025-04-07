@@ -1,0 +1,12 @@
+<div class="widget widget-newsletter bg-white shadow-sm rounded-lg p-6 mb-6">
+    {% if widget.title %}
+        <h3 class="text-lg font-semibold mb-4">{{ widget.title }}</h3>
+    {% endif %}
+    
+    <p class="text-gray-600 text-sm mb-4">
+        {{ widget.content|default:"Get the latest updates delivered directly to your inbox." }}
+    </p>
+    
+    {% load newsletter_tags %}
+    {% newsletter_subscribe_form %}
+</div>

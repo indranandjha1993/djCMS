@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.meta_title|default:category.name }}{% endblock %}
+{% block meta_description %}{{ category.meta_description|default:'' }}{% endblock %}
+{% block meta_keywords %}{{ category.meta_keywords|default:'' }}{% endblock %}
+
+{% block content %}
+<div class="max-w-container mx-auto px-4 py-8">
+    <header class="mb-8">
+        {% if category.featured_image %}
+            <div class="mb-6">
+                <img src="{{ category.featured_image.url }}" alt="{{ category.name }}" class="w-full h-64 object-cover rounded-lg">
+            </div>
+        {% endif %}
+        
+        <h1 class="text-3xl font-bold mb-4">{{ category.name }}</h1>
+        
+        {% if category.description %}
+            <div class="text-lg text-gray-600">
+                {{ category.description }}
+            </div>
+        {% endif %}
+        
+        {% if category.parent %}
+            <div class="mt-4 text-sm">
+                <span class="text-gray-500">Parent category:</span>
+                <a href="{{ category.parent.get_absolute_url }}" class="text-primary hover:underline ml-1">
+                    {{ category.parent.name }}
+                </a>
+            </div>
+        {% endif %}
+    </header>
+    
+    {% if subcategories %}
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Subcategories</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {% for subcategory in subcategories %}
+                    <div class="bg-white shadow-sm rounded-lg p-4">
+                        <h3 class="text-lg font-bold mb-2">
+                            <a href="{{ subcategory.get_absolute_url }}" class="hover:text-primary transition-colors">
+                                {{ subcategory.name }}
+                            </a>
+                        </h3>
+                        
+                        {% if subcategory.description %}
+                            <div class="text-gray-600 mb-3 line-clamp-2">
+                                {{ subcategory.description }}
+                            </div>
+                        {% endif %}
+                        
+                        <a href="{{ subcategory.get_absolute_url }}" class="text-primary hover:underline text-sm">
+                            View subcategory
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+    
+    <section>
+        <h2 class="text-2xl font-bold mb-4">Pages in this category</h2>
+        
+        {% load pages_tags %}
+        {% show_page_list pages 3 %}
+        
+        {% if not pages %}
+            <div class="text-center py-8 text-gray-500">
+                No pages found in this category.
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

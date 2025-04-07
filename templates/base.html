@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+{% load core_tags %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% if page %}{{ page.meta_title|default:page.title|default:"djCMS" }}{% else %}djCMS{% endif %}{% endblock %}</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="{% block meta_description %}{% if page %}{{ page.meta_description|default:'' }}{% endif %}{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}{% if page %}{{ page.meta_keywords|default:'' }}{% endif %}{% endblock %}">
+    {% if page and page.canonical_url %}<link rel="canonical" href="{{ page.canonical_url }}">{% endif %}
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="{% block og_title %}{% if page %}{{ page.og_title|default:page.meta_title|default:page.title|default:'djCMS' }}{% else %}djCMS{% endif %}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% if page %}{{ page.og_description|default:page.meta_description|default:'' }}{% endif %}{% endblock %}">
+    {% if page and page.og_image %}<meta property="og:image" content="{{ page.og_image.url }}">{% endif %}
+    <meta property="og:type" content="website">
+    
+    <!-- Favicon -->
+    {% if theme.favicon %}<link rel="icon" href="{{ theme.favicon.url }}">{% endif %}
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "{{ theme.primary_color|default:'#3490dc' }}",
+                        secondary: "{{ theme.secondary_color|default:'#ffed4a' }}",
+                        accent: "{{ theme.accent_color|default:'#f66d9b' }}",
+                    },
+                    fontFamily: {
+                        sans: ["{{ theme.font_family|default:'Inter, sans-serif' }}", 'sans-serif'],
+                        {% if theme.heading_font_family %}heading: ["{{ theme.heading_font_family }}", 'sans-serif'],{% endif %}
+                    },
+                    maxWidth: {
+                        container: "{{ theme.container_width|default:'1200px' }}",
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <style>
+        {% if theme.custom_css %}{{ theme.custom_css|safe }}{% endif %}
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    {% if theme.logo %}
+                        <a href="{% url 'pages:home' %}" class="block">
+                            <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-10">
+                        </a>
+                    {% else %}
+                        <a href="{% url 'pages:home' %}" class="text-2xl font-bold text-primary">djCMS</a>
+                    {% endif %}
+                </div>
+                
+                <!-- Main Navigation -->
+                <nav class="hidden md:block">
+                    <ul class="flex space-x-6">
+                        {% if header_menu %}
+                            {% for item in header_menu.items.all %}
+                                {% if not item.parent %}
+                                    <li class="relative group">
+                                        <a href="{{ item.get_url }}" 
+                                           class="py-2 hover:text-primary transition-colors"
+                                           {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                            {{ item.title }}
+                                        </a>
+                                        
+                                        {% with children=item.children.all %}
+                                            {% if children %}
+                                                <ul class="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-10 hidden group-hover:block">
+                                                    {% for child in children %}
+                                                        <li>
+                                                            <a href="{{ child.get_url }}" 
+                                                               class="block px-4 py-2 hover:bg-gray-100 transition-colors"
+                                                               {% if child.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                                {{ child.title }}
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        <li>
+                            <a href="{% url 'blog:post_list' %}" class="py-2 hover:text-primary transition-colors">
+                                Blog
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'core:contact' %}" class="py-2 hover:text-primary transition-colors">
+                                Contact
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <!-- Search Form -->
+                <div class="hidden md:block ml-6">
+                    <form action="{% url 'search:search' %}" method="get" class="flex">
+                        <input type="text" name="q" placeholder="Search..." 
+                               class="w-40 px-3 py-1 border border-gray-300 rounded-l-md focus:outline-none focus:ring-primary focus:border-primary">
+                        <button type="submit" class="bg-primary text-white px-3 py-1 rounded-r-md hover:bg-opacity-90 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="hidden md:flex items-center ml-6">
+                    {% if user.is_authenticated %}
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 focus:outline-none">
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar.url }}" alt="{{ user.display_name }}" class="w-8 h-8 rounded-full object-cover">
+                                {% else %}
+                                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
+                                        {{ user.username|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <span>{{ user.display_name }}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            
+                            <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-10 hidden group-hover:block">
+                                <a href="{% url 'core:profile' %}" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+                                    Profile
+                                </a>
+                                <a href="{% url 'blog:author_dashboard' %}" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+                                    Author Dashboard
+                                </a>
+                                {% if user.is_staff %}
+                                    <a href="{% url 'admin:index' %}" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+                                        Admin
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'core:logout' %}" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+                                    Log Out
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'core:login' %}" class="text-gray-600 hover:text-primary transition-colors">
+                            Log In
+                        </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden" id="mobile-menu-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div class="md:hidden hidden" id="mobile-menu">
+                <!-- Mobile Search Form -->
+                <div class="mb-4 mt-4">
+                    <form action="{% url 'search:search' %}" method="get" class="flex">
+                        <input type="text" name="q" placeholder="Search..." 
+                               class="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-primary focus:border-primary">
+                        <button type="submit" class="bg-primary text-white px-3 py-2 rounded-r-md hover:bg-opacity-90 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                
+                <ul class="space-y-2">
+                    {% if header_menu %}
+                        {% for item in header_menu.items.all %}
+                            {% if not item.parent %}
+                                <li>
+                                    <a href="{{ item.get_url }}" 
+                                       class="block py-2 hover:text-primary transition-colors"
+                                       {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                        {{ item.title }}
+                                    </a>
+                                    
+                                    {% with children=item.children.all %}
+                                        {% if children %}
+                                            <ul class="pl-4 mt-1 space-y-1">
+                                                {% for child in children %}
+                                                    <li>
+                                                        <a href="{{ child.get_url }}" 
+                                                           class="block py-1 hover:text-primary transition-colors"
+                                                           {% if child.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                            {{ child.title }}
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    {% endwith %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <li>
+                        <a href="{% url 'blog:post_list' %}" class="block py-2 hover:text-primary transition-colors">
+                            Blog
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'core:contact' %}" class="block py-2 hover:text-primary transition-colors">
+                            Contact
+                        </a>
+                    </li>
+                    
+                    <!-- Mobile User Menu -->
+                    <li class="border-t border-gray-200 mt-4 pt-4">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'core:profile' %}" class="block py-2 hover:text-primary transition-colors">
+                                Profile
+                            </a>
+                            <a href="{% url 'blog:author_dashboard' %}" class="block py-2 hover:text-primary transition-colors">
+                                Author Dashboard
+                            </a>
+                            {% if user.is_staff %}
+                                <a href="{% url 'admin:index' %}" class="block py-2 hover:text-primary transition-colors">
+                                    Admin
+                                </a>
+                            {% endif %}
+                            <a href="{% url 'core:logout' %}" class="block py-2 hover:text-primary transition-colors">
+                                Log Out
+                            </a>
+                        {% else %}
+                            <a href="{% url 'core:login' %}" class="block py-2 hover:text-primary transition-colors">
+                                Log In
+                            </a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    {% load widget_tags %}
+                    {% with template_name="widgets/footer_widget.html" %}
+                        {% show_widget_area 'footer-left' %}
+                    {% endwith %}
+                    
+                    {% if not widgets %}
+                        <h3 class="text-xl font-bold mb-4">About</h3>
+                        <p class="text-gray-300">A flexible CMS platform built with Django and Tailwind CSS.</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    {% with template_name="widgets/footer_widget.html" %}
+                        {% show_widget_area 'footer-center' %}
+                    {% endwith %}
+                    
+                    {% if not widgets %}
+                        <h3 class="text-xl font-bold mb-4">Links</h3>
+                        <ul class="space-y-2">
+                            {% if footer_menu %}
+                                {% for item in footer_menu.items.all %}
+                                    {% if not item.parent %}
+                                        <li>
+                                            <a href="{{ item.get_url }}" 
+                                               class="text-gray-300 hover:text-white transition-colors"
+                                               {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                {{ item.title }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    {% with template_name="widgets/footer_widget.html" %}
+                        {% show_widget_area 'footer-right' %}
+                    {% endwith %}
+                    
+                    {% if not widgets %}
+                        <h3 class="text-xl font-bold mb-4">Contact</h3>
+                        <p class="text-gray-300 mb-2">Email: info@example.com</p>
+                        <a href="{% url 'core:contact' %}" class="text-gray-300 hover:text-white transition-colors">
+                            Contact Us
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; {% now "Y" %} djCMS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+        
+        {% if theme.custom_js %}{{ theme.custom_js|safe }}{% endif %}
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

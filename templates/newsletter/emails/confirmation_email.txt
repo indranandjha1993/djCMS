@@ -1,0 +1,12 @@
+Hello{% if subscriber.name %} {{ subscriber.name }}{% endif %},
+
+Thank you for subscribing to our newsletter. To complete your subscription, please click the link below to confirm your email address:
+
+{{ confirmation_url }}
+
+If you didn't request this subscription, you can safely ignore this email.
+
+Best regards,
+The djCMS Team
+
+© {% now "Y" %} djCMS. All rights reserved.

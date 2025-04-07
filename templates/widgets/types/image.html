@@ -1,0 +1,25 @@
+<div class="widget widget-image bg-white shadow-sm rounded-lg p-6 mb-6">
+    {% if widget.title %}
+        <h3 class="text-lg font-semibold mb-4">{{ widget.title }}</h3>
+    {% endif %}
+    
+    {% if widget.settings.image_url %}
+        <div class="text-center">
+            {% if widget.settings.link_url %}
+                <a href="{{ widget.settings.link_url }}" {% if widget.settings.open_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                    <img src="{{ widget.settings.image_url }}" alt="{{ widget.settings.alt_text|default:widget.title }}" class="mx-auto">
+                </a>
+            {% else %}
+                <img src="{{ widget.settings.image_url }}" alt="{{ widget.settings.alt_text|default:widget.title }}" class="mx-auto">
+            {% endif %}
+            
+            {% if widget.content %}
+                <div class="mt-4 text-gray-600 text-sm">
+                    {{ widget.content|linebreaks }}
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <p class="text-gray-500">No image specified.</p>
+    {% endif %}
+</div>

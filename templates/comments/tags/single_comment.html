@@ -1,0 +1,127 @@
+{% load comments_tags %}
+
+<div class="bg-white shadow-sm rounded-lg p-6" id="comment-{{ comment.id }}">
+    <div class="flex justify-between items-start">
+        <div class="flex items-start">
+            {% if comment.author and comment.author.avatar %}
+                <img src="{{ comment.author.avatar.url }}" alt="{{ comment.get_author_name }}" class="w-10 h-10 rounded-full mr-4">
+            {% else %}
+                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center mr-4">
+                    {{ comment.get_author_name|first|upper }}
+                </div>
+            {% endif %}
+            
+            <div>
+                <h4 class="font-bold">{{ comment.get_author_name }}</h4>
+                <p class="text-sm text-gray-500">{{ comment.created_at|date:"F j, Y, g:i a" }}</p>
+            </div>
+        </div>
+        
+        <div class="flex space-x-2">
+            {% if user.is_authenticated %}
+                <button class="text-sm text-primary hover:underline reply-button" data-comment-id="{{ comment.id }}">
+                    Reply
+                </button>
+            {% endif %}
+            
+            {% if user == comment.author or user.is_staff %}
+                <a href="{% url 'comments:delete_comment' comment.id %}" class="text-sm text-red-500 hover:underline" onclick="return confirm('Are you sure you want to delete this comment?')">
+                    Delete
+                </a>
+            {% endif %}
+            
+            {% if user.is_staff and comment.status == 'pending' %}
+                <a href="{% url 'comments:approve_comment' comment.id %}" class="text-sm text-green-500 hover:underline">
+                    Approve
+                </a>
+                <a href="{% url 'comments:reject_comment' comment.id %}" class="text-sm text-red-500 hover:underline">
+                    Reject
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="mt-4 prose max-w-none">
+        {{ comment.content|linebreaks }}
+    </div>
+    
+    <!-- Reply form (hidden by default) -->
+    <div class="mt-4 hidden reply-form" id="reply-form-{{ comment.id }}">
+        <form method="post" action="{% url 'comments:post_reply' content_type_id object_id comment.id %}">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="content-{{ comment.id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                    Your Reply
+                </label>
+                <textarea name="content" id="content-{{ comment.id }}" rows="3" required
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"></textarea>
+            </div>
+            
+            {% if not user.is_authenticated %}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label for="author_name-{{ comment.id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Name
+                        </label>
+                        <input type="text" name="author_name" id="author_name-{{ comment.id }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label for="author_email-{{ comment.id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Email
+                        </label>
+                        <input type="email" name="author_email" id="author_email-{{ comment.id }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label for="author_url-{{ comment.id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Website
+                        </label>
+                        <input type="url" name="author_url" id="author_url-{{ comment.id }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+                    </div>
+                </div>
+            {% endif %}
+            
+            <div class="flex justify-end space-x-2">
+                <button type="button" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors cancel-reply" data-comment-id="{{ comment.id }}">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors">
+                    Post Reply
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Replies -->
+    {% if comment.replies.all %}
+        <div class="mt-6 ml-12 space-y-6">
+            {% for reply in comment.replies.all %}
+                {% if reply.is_approved %}
+                    {% include "comments/tags/single_comment.html" with comment=reply content_type_id=content_type_id object_id=object_id user=user %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Reply button click handler
+        document.querySelectorAll('.reply-button').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-comment-id');
+                document.getElementById(`reply-form-${commentId}`).classList.toggle('hidden');
+            });
+        });
+        
+        // Cancel reply button click handler
+        document.querySelectorAll('.cancel-reply').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-comment-id');
+                document.getElementById(`reply-form-${commentId}`).classList.add('hidden');
+            });
+        });
+    });
+</script>

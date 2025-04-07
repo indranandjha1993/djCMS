@@ -1,0 +1,17 @@
+<div class="widget widget-tags bg-white shadow-sm rounded-lg p-6 mb-6">
+    {% if widget.title %}
+        <h3 class="text-lg font-semibold mb-4">{{ widget.title }}</h3>
+    {% endif %}
+    
+    {% if tags %}
+        <div class="flex flex-wrap gap-2">
+            {% for tag in tags %}
+                <a href="{% url 'blog:tag_post_list' tag.slug %}" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm transition-colors">
+                    #{{ tag.name }}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-gray-500">No tags found.</p>
+    {% endif %}
+</div>

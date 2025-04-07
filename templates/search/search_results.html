@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load core_tags %}
+
+{% block title %}Search Results for "{{ query }}"{% endblock %}
+
+{% block content %}
+<div class="max-w-container mx-auto px-4 py-8">
+    <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-4">Search Results</h1>
+        
+        <form action="{% url 'search:search' %}" method="get" class="mb-6">
+            <div class="flex">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search..." required
+                       class="flex-grow px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-primary focus:border-primary">
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-opacity-90 transition-colors">
+                    Search
+                </button>
+            </div>
+        </form>
+        
+        {% if query %}
+            <p class="text-gray-600">
+                {{ results|length }} result{{ results|length|pluralize }} found for "{{ query }}"
+            </p>
+        {% endif %}
+    </header>
+    
+    {% if results %}
+        <div class="space-y-6">
+            {% for result in results %}
+                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                    <div class="p-6">
+                        <h2 class="text-xl font-bold mb-2">
+                            <a href="{{ result.get_absolute_url }}" class="hover:text-primary transition-colors">
+                                {% if result|classname == 'Page' or result|classname == 'Post' %}
+                                    {{ result.title }}
+                                {% elif result|classname == 'Category' %}
+                                    {{ result.name }}
+                                {% else %}
+                                    {{ result }}
+                                {% endif %}
+                            </a>
+                        </h2>
+                        
+                        <div class="text-sm text-gray-500 mb-2">
+                            {% if result|classname == 'Page' %}
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Page</span>
+                            {% elif result|classname == 'Category' %}
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Category</span>
+                            {% endif %}
+                            
+                            {% if result.published_at %}
+                                <span class="ml-2">{{ result.published_at|date:"F j, Y" }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="text-gray-600 mb-4">
+                            {% if result|classname == 'Page' or result|classname == 'Post' %}
+                                {% if result.excerpt %}
+                                    {{ result.excerpt|truncatewords:30 }}
+                                {% elif result.content %}
+                                    {{ result.content|striptags|truncatewords:30 }}
+                                {% endif %}
+                            {% elif result|classname == 'Category' %}
+                                {% if result.description %}
+                                    {{ result.description|truncatewords:30 }}
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        
+                        <a href="{{ result.get_absolute_url }}" class="text-primary hover:underline">
+                            View {{ result|classname|lower }}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if is_paginated %}
+            <div class="mt-8 flex justify-center">
+                <nav class="inline-flex rounded-md shadow">
+                    {% if page_obj.has_previous %}
+                        <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}" class="px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            Previous
+                        </a>
+                    {% endif %}
+                    
+                    <span class="px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?q={{ query }}&page={{ page_obj.next_page_number }}" class="px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            Next
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+        {% endif %}
+    {% else %}
+        {% if query %}
+            <div class="bg-white shadow-sm rounded-lg p-8 text-center">
+                <h2 class="text-xl font-bold mb-2">No results found</h2>
+                <p class="text-gray-600 mb-4">
+                    Sorry, we couldn't find any results matching "{{ query }}".
+                </p>
+                <p class="text-gray-600">
+                    Try different keywords or check your spelling.
+                </p>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

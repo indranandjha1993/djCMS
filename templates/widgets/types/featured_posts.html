@@ -1,0 +1,47 @@
+<div class="widget widget-featured-posts mb-6">
+    {% if widget.title %}
+        <h3 class="text-2xl font-bold mb-6 text-center">{{ widget.title }}</h3>
+    {% endif %}
+    
+    {% load blog_tags %}
+    {% get_featured_posts widget.settings.count|default:3 as featured_posts %}
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for post in featured_posts %}
+            <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                {% if post.featured_image %}
+                    <a href="{{ post.get_absolute_url }}">
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                    </a>
+                {% endif %}
+                
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-2">
+                        <a href="{{ post.get_absolute_url }}" class="hover:text-primary transition-colors">
+                            {{ post.title }}
+                        </a>
+                    </h3>
+                    
+                    <div class="text-sm text-gray-500 mb-3">
+                        {{ post.published_at|date:"F j, Y" }} • 
+                        <a href="{% url 'blog:author_detail' post.author.username %}" class="hover:text-primary transition-colors">
+                            {{ post.author.get_full_name|default:post.author.username }}
+                        </a>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4">
+                        {{ post.excerpt|truncatewords:25 }}
+                    </p>
+                    
+                    <a href="{{ post.get_absolute_url }}" class="text-primary hover:underline">
+                        Read more →
+                    </a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-span-3 text-center text-gray-500 py-12">
+                No featured posts found.
+            </div>
+        {% endfor %}
+    </div>
+</div>

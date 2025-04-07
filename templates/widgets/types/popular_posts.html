@@ -1,0 +1,33 @@
+<div class="widget widget-popular-posts bg-white shadow-sm rounded-lg p-6 mb-6">
+    {% if widget.title %}
+        <h3 class="text-lg font-semibold mb-4">{{ widget.title }}</h3>
+    {% endif %}
+    
+    {% if posts %}
+        <div class="space-y-4">
+            {% for post in posts %}
+                <div class="flex">
+                    {% if post.featured_image %}
+                        <a href="{{ post.get_absolute_url }}" class="flex-shrink-0">
+                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-16 h-16 object-cover rounded">
+                        </a>
+                    {% endif %}
+                    
+                    <div class="{% if post.featured_image %}ml-4{% endif %}">
+                        <h4 class="font-medium">
+                            <a href="{{ post.get_absolute_url }}" class="hover:text-primary transition-colors">
+                                {{ post.title }}
+                            </a>
+                        </h4>
+                        
+                        <div class="text-sm text-gray-500">
+                            {{ post.comment_count }} comment{{ post.comment_count|pluralize }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-gray-500">No posts found.</p>
+    {% endif %}
+</div>

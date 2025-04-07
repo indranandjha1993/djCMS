@@ -1,0 +1,9 @@
+<div class="widget widget-html bg-white shadow-sm rounded-lg p-6 mb-6">
+    {% if widget.title %}
+        <h3 class="text-lg font-semibold mb-4">{{ widget.title }}</h3>
+    {% endif %}
+    
+    <div class="widget-content">
+        {{ widget.content|safe }}
+    </div>
+</div>

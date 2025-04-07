@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Unsubscribed from Newsletter{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-12">
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="p-6 text-center">
+            <div class="text-gray-500 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            
+            <h1 class="text-2xl font-bold mb-4">You've Been Unsubscribed</h1>
+            
+            <p class="text-gray-600 mb-6">
+                You have been successfully unsubscribed from our newsletter. We're sorry to see you go, but you're welcome back anytime.
+            </p>
+            
+            <div class="flex justify-center">
+                <a href="{% url 'pages:home' %}" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors">
+                    Return to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

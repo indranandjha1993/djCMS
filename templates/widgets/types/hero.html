@@ -1,0 +1,49 @@
+<div class="widget widget-hero mb-6">
+    <div class="relative">
+        {% if widget.settings.image_url %}
+            <img src="{{ widget.settings.image_url }}" alt="{{ widget.title }}" class="w-full h-auto rounded-lg">
+            
+            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg">
+                <div class="text-center text-white p-8 max-w-3xl">
+                    {% if widget.title %}
+                        <h2 class="text-4xl font-bold mb-4">{{ widget.title }}</h2>
+                    {% endif %}
+                    
+                    {% if widget.content %}
+                        <div class="text-xl mb-6">
+                            {{ widget.content|linebreaks }}
+                        </div>
+                    {% endif %}
+                    
+                    {% if widget.settings.button_text and widget.settings.button_url %}
+                        <a href="{{ widget.settings.button_url }}" 
+                           class="inline-block bg-primary text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors"
+                           {% if widget.settings.open_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                            {{ widget.settings.button_text }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="bg-primary bg-opacity-10 rounded-lg p-12 text-center">
+                {% if widget.title %}
+                    <h2 class="text-3xl font-bold mb-4">{{ widget.title }}</h2>
+                {% endif %}
+                
+                {% if widget.content %}
+                    <div class="text-xl text-gray-600 mb-6 max-w-3xl mx-auto">
+                        {{ widget.content|linebreaks }}
+                    </div>
+                {% endif %}
+                
+                {% if widget.settings.button_text and widget.settings.button_url %}
+                    <a href="{{ widget.settings.button_url }}" 
+                       class="inline-block bg-primary text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors"
+                       {% if widget.settings.open_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                        {{ widget.settings.button_text }}
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>

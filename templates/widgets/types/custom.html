@@ -1,0 +1,15 @@
+<div class="widget widget-custom bg-white shadow-sm rounded-lg p-6 mb-6">
+    {% if widget.title %}
+        <h3 class="text-lg font-semibold mb-4">{{ widget.title }}</h3>
+    {% endif %}
+    
+    {% if widget.content_object %}
+        {% with template_name=widget.settings.template|default:"widgets/custom/default.html" %}
+            {% include template_name with object=widget.content_object %}
+        {% endwith %}
+    {% else %}
+        <div class="text-gray-600">
+            {{ widget.content|linebreaks }}
+        </div>
+    {% endif %}
+</div>

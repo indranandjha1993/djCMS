@@ -1,0 +1,19 @@
+<div class="widget widget-cta bg-primary bg-opacity-10 rounded-lg p-8 text-center mb-6">
+    {% if widget.title %}
+        <h3 class="text-2xl font-bold mb-4">{{ widget.title }}</h3>
+    {% endif %}
+    
+    {% if widget.content %}
+        <div class="text-gray-600 mb-6 max-w-2xl mx-auto">
+            {{ widget.content|linebreaks }}
+        </div>
+    {% endif %}
+    
+    {% if widget.settings.button_text and widget.settings.button_url %}
+        <a href="{{ widget.settings.button_url }}" 
+           class="inline-block bg-primary text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors"
+           {% if widget.settings.open_new_tab %}target="_blank" rel="noopener"{% endif %}>
+            {{ widget.settings.button_text }}
+        </a>
+    {% endif %}
+</div>

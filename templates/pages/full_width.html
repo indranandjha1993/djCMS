@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-container mx-auto px-4 py-8">
+    <article class="bg-white shadow-sm rounded-lg p-6">
+        {% if page.featured_image %}
+            <div class="mb-6">
+                <img src="{{ page.featured_image.url }}" alt="{{ page.title }}" class="w-full h-auto rounded-lg">
+            </div>
+        {% endif %}
+        
+        <h1 class="text-3xl font-bold mb-4">{{ page.title }}</h1>
+        
+        {% if page.excerpt %}
+            <div class="text-lg text-gray-600 mb-6">
+                {{ page.excerpt }}
+            </div>
+        {% endif %}
+        
+        <div class="prose max-w-none">
+            {{ page.content|safe }}
+        </div>
+        
+        {% if page.tags.all %}
+            <div class="mt-6 flex flex-wrap gap-2">
+                {% for tag in page.tags.all %}
+                    <a href="{% url 'pages:tag_detail' tag.slug %}" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm transition-colors">
+                        #{{ tag.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% load comments_tags %}
+        {% comment_list page user %}
+        {% comment_form page user %}
+    </article>
+</div>
+{% endblock %}

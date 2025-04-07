@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-container mx-auto px-4 py-8">
+    {% if page.featured_image %}
+        <div class="mb-8">
+            <img src="{{ page.featured_image.url }}" alt="{{ page.title }}" class="w-full h-auto rounded-lg">
+        </div>
+    {% endif %}
+    
+    {% if page.title %}
+        <h1 class="text-4xl font-bold mb-6 text-center">{{ page.title }}</h1>
+    {% endif %}
+    
+    {% if page.excerpt %}
+        <div class="text-xl text-gray-600 mb-8 text-center max-w-3xl mx-auto">
+            {{ page.excerpt }}
+        </div>
+    {% endif %}
+    
+    <!-- Homepage Widget Area -->
+    <div class="mb-12">
+        {% load widget_tags %}
+        {% show_widget_area 'homepage' %}
+    </div>
+    
+    <!-- Main Content -->
+    {% if page.content %}
+        <div class="bg-white shadow-sm rounded-lg p-8 mb-12">
+            <div class="prose max-w-none">
+                {{ page.content|safe }}
+            </div>
+        </div>
+    {% endif %}
+    
+    <!-- Featured Posts Section -->
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6">Latest Blog Posts</h2>
+        
+        {% load blog_tags %}
+        {% get_recent_posts 3 as recent_posts %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for post in recent_posts %}
+                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                    {% if post.featured_image %}
+                        <a href="{{ post.get_absolute_url }}">
+                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                        </a>
+                    {% endif %}
+                    
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">
+                            <a href="{{ post.get_absolute_url }}" class="hover:text-primary transition-colors">
+                                {{ post.title }}
+                            </a>
+                        </h3>
+                        
+                        <div class="text-sm text-gray-500 mb-3">
+                            {{ post.published_at|date:"F j, Y" }} • 
+                            <a href="{% url 'blog:author_detail' post.author.username %}" class="hover:text-primary transition-colors">
+                                {{ post.author.get_full_name|default:post.author.username }}
+                            </a>
+                        </div>
+                        
+                        <p class="text-gray-600 mb-4">
+                            {{ post.excerpt|truncatewords:25 }}
+                        </p>
+                        
+                        <a href="{{ post.get_absolute_url }}" class="text-primary hover:underline">
+                            Read more →
+                        </a>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-span-3 text-center text-gray-500 py-12">
+                    No posts found.
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-6">
+            <a href="{% url 'blog:post_list' %}" class="inline-block bg-primary text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors">
+                View All Posts
+            </a>
+        </div>
+    </div>
+    
+    <!-- Call to Action Section -->
+    <div class="bg-primary bg-opacity-10 rounded-lg p-8 text-center">
+        <h2 class="text-2xl font-bold mb-4">Subscribe to Our Newsletter</h2>
+        <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Stay updated with our latest news, articles, and updates. We'll never spam you or share your email with third parties.
+        </p>
+        
+        <div class="max-w-md mx-auto">
+            {% load newsletter_tags %}
+            {% newsletter_subscribe_form %}
+        </div>
+    </div>
+</div>
+{% endblock %}

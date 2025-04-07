@@ -1,0 +1,11 @@
+{% if widgets %}
+    <div class="widget-area" id="widget-area-{{ area.slug }}">
+        {% for widget in widgets %}
+            {% if template_name %}
+                {% include template_name with widget=widget %}
+            {% else %}
+                {% include widget.get_template %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}

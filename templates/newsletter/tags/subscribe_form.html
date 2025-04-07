@@ -1,0 +1,31 @@
+<div class="bg-white shadow-sm rounded-lg p-6">
+    <h3 class="text-lg font-semibold mb-4">Subscribe to Newsletter</h3>
+    
+    <p class="text-gray-600 text-sm mb-4">
+        Get the latest updates delivered directly to your inbox.
+    </p>
+    
+    <form action="{{ action_url }}" method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="{{ form.email.id_for_label }}" class="sr-only">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="text-red-500 text-xs mt-1">{{ form.email.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-4">
+            <label for="{{ form.name.id_for_label }}" class="sr-only">Name</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="text-red-500 text-xs mt-1">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors">
+            Subscribe
+        </button>
+    </form>
+</div>

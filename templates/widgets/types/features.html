@@ -1,0 +1,37 @@
+<div class="widget widget-features mb-6">
+    {% if widget.title %}
+        <h3 class="text-2xl font-bold mb-6 text-center">{{ widget.title }}</h3>
+    {% endif %}
+    
+    {% if widget.content %}
+        <div class="text-xl text-gray-600 mb-8 text-center max-w-3xl mx-auto">
+            {{ widget.content|linebreaks }}
+        </div>
+    {% endif %}
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for feature in widget.settings.features %}
+            <div class="bg-white shadow-sm rounded-lg p-6 text-center">
+                {% if feature.icon %}
+                    <div class="text-primary mb-4">
+                        <i class="{{ feature.icon }} text-4xl"></i>
+                    </div>
+                {% endif %}
+                
+                {% if feature.title %}
+                    <h4 class="text-xl font-bold mb-3">{{ feature.title }}</h4>
+                {% endif %}
+                
+                {% if feature.description %}
+                    <p class="text-gray-600">
+                        {{ feature.description }}
+                    </p>
+                {% endif %}
+            </div>
+        {% empty %}
+            <div class="col-span-3 text-center text-gray-500 py-12">
+                No features defined.
+            </div>
+        {% endfor %}
+    </div>
+</div>

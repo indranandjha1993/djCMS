@@ -1,0 +1,17 @@
+{% load comments_tags %}
+
+<div class="mt-8">
+    <h3 class="text-xl font-bold mb-4">Comments ({{ comments|length }})</h3>
+    
+    {% if comments %}
+        <div class="space-y-6">
+            {% for comment in comments %}
+                {% include "comments/tags/single_comment.html" with comment=comment content_type_id=content_type_id object_id=object_id user=user %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white shadow-sm rounded-lg p-6">
+            <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+        </div>
+    {% endif %}
+</div>

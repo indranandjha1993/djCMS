@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="md:col-span-1">
+            {% load widget_tags %}
+            {% show_widget_area 'sidebar' %}
+            
+            {% if not widgets %}
+                <aside class="bg-white shadow-sm rounded-lg p-6">
+                    <h2 class="text-xl font-bold mb-4">Sidebar</h2>
+                    
+                    {% if sidebar_menu %}
+                        <nav class="mb-6">
+                            <h3 class="text-lg font-semibold mb-2">Navigation</h3>
+                            <ul class="space-y-2">
+                                {% for item in sidebar_menu.items.all %}
+                                    {% if not item.parent %}
+                                        <li>
+                                            <a href="{{ item.get_url }}" 
+                                               class="block py-2 hover:text-primary transition-colors"
+                                               {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                {{ item.title }}
+                                            </a>
+                                            
+                                            {% with children=item.children.all %}
+                                                {% if children %}
+                                                    <ul class="pl-4 mt-1 space-y-1">
+                                                        {% for child in children %}
+                                                            <li>
+                                                                <a href="{{ child.get_url }}" 
+                                                                   class="block py-1 hover:text-primary transition-colors"
+                                                                   {% if child.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                                    {{ child.title }}
+                                                                </a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Recent Pages</h3>
+                        {% load pages_tags %}
+                        {% get_recent_pages 5 as recent_pages %}
+                        <ul class="space-y-2">
+                            {% for recent_page in recent_pages %}
+                                <li>
+                                    <a href="{{ recent_page.get_absolute_url }}" class="block py-2 hover:text-primary transition-colors">
+                                        {{ recent_page.title }}
+                                    </a>
+                                </li>
+                            {% empty %}
+                                <li class="text-gray-500">No recent pages</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold mb-2">Popular Tags</h3>
+                        {% show_popular_tags 10 %}
+                    </div>
+                    
+                    <div class="mt-6">
+                        {% load newsletter_tags %}
+                        {% newsletter_subscribe_form %}
+                    </div>
+                </aside>
+            {% endif %}
+        </div>
+        
+        <div class="md:col-span-3">
+            <article class="bg-white shadow-sm rounded-lg p-6">
+                {% if page.featured_image %}
+                    <div class="mb-6">
+                        <img src="{{ page.featured_image.url }}" alt="{{ page.title }}" class="w-full h-auto rounded-lg">
+                    </div>
+                {% endif %}
+                
+                <h1 class="text-3xl font-bold mb-4">{{ page.title }}</h1>
+                
+                {% if page.excerpt %}
+                    <div class="text-lg text-gray-600 mb-6">
+                        {{ page.excerpt }}
+                    </div>
+                {% endif %}
+                
+                <div class="prose max-w-none">
+                    {{ page.content|safe }}
+                </div>
+                
+                {% if page.tags.all %}
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        {% for tag in page.tags.all %}
+                            <a href="{% url 'pages:tag_detail' tag.slug %}" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm transition-colors">
+                                #{{ tag.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% load comments_tags %}
+                {% comment_list page user %}
+                {% comment_form page user %}
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock %}

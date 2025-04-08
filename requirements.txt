@@ -1,5 +1,6 @@
 asgiref==3.8.1
 crispy-tailwind==1.0.3
+dj-database-url==2.3.0
 Django==5.2
 django-appconf==1.1.0
 django-ckeditor==6.7.2
@@ -9,8 +10,13 @@ django-imagekit==5.0.0
 django-js-asset==3.1.2
 django-mptt==0.17.0
 django-taggit==6.1.0
+gunicorn==23.0.0
 mysqlclient==2.2.7
+packaging==24.2
 pilkit==3.0
 pillow==11.1.0
+psycopg2-binary==2.9.10
 python-dotenv==1.1.0
 sqlparse==0.5.3
+typing_extensions==4.13.1
+whitenoise==6.9.0

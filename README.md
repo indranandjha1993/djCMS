@@ -67,28 +67,70 @@ A WordPress-like content management system built with Django and Tailwind CSS.
    railway init
    ```
 
-3. Add a PostgreSQL database to your project:
+3. Add a MySQL database to your project:
    ```
    railway add
    ```
-   Select PostgreSQL from the list of plugins.
+   Select MySQL from the list of plugins.
 
-4. Deploy your application:
+4. Get your MySQL connection details:
+   ```
+   railway connect
+   ```
+   This will show you the connection details for your MySQL database.
+
+5. Create a `.env.railway` file based on the example template:
+   ```
+   cp .env.railway.example .env.railway
+   ```
+   Then update it with your MySQL connection details:
+   ```
+   DATABASE_URL=mysql://username:password@hostname:port/railway
+   ```
+   
+   **Important**: Never commit the `.env.railway` file to your repository as it contains sensitive information.
+
+6. Deploy your application:
    ```
    railway up
    ```
 
-5. Set environment variables:
+7. Set environment variables in Railway (recommended approach for sensitive data):
    ```
    railway variables set SECRET_KEY=your-secret-key-here
    railway variables set DEBUG=False
    railway variables set ALLOWED_HOSTS=.railway.app,localhost,127.0.0.1
+   railway variables set DATABASE_URL=mysql://username:password@hostname:port/railway
    ```
+   
+   This is more secure than using `.env` files as the variables are stored securely in Railway and not in your codebase.
 
-6. Open your application:
+8. Open your application:
    ```
    railway open
    ```
+
+### Using an Existing MySQL Database
+
+If you already have a MySQL database on Railway, you can connect to it using:
+
+```
+mysql -h hostname -u username -p --port port --protocol=TCP railway
+```
+
+When prompted, enter your password. For example:
+
+```
+mysql -h maglev.proxy.rlwy.net -u root -p --port 51998 --protocol=TCP railway
+```
+
+Then set the DATABASE_URL environment variable in Railway:
+
+```
+railway variables set DATABASE_URL=mysql://root:password@maglev.proxy.rlwy.net:51998/railway
+```
+
+Or add it to your `.env.railway` file (but remember not to commit this file).
 
 ### Automatic Deployment
 

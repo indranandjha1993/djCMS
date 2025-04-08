@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load core_tags %}
+{% load core_tags static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -27,6 +27,171 @@
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --primary-light: #818CF8;
+            --secondary: #10B981;
+            --secondary-dark: #059669;
+            --accent: #F59E0B;
+            --dark: #1F2937;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+        }
+        
+        /* Typography */
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #374151;
+            background-color: #F3F4F6;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.6s ease-out forwards;
+        }
+        
+        .animate-scale {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .animate-scale:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Gradients */
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* Cards */
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Shadows */
+        .shadow-soft {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+        }
+        
+        .shadow-elevated {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Header */
+        header {
+            transition: all 0.3s ease;
+        }
+        
+        /* Custom Utilities */
+        .bg-dark {
+            background-color: var(--dark);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* Responsive Container */
+        .max-w-container {
+            max-width: 1280px;
+        }
+    </style>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -150,13 +315,13 @@
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
     <!-- Header -->
-    <header class="bg-white shadow-card sticky top-0 z-50">
-        <div class="max-w-container mx-auto px-4 py-3">
+    <header class="bg-white shadow-soft sticky top-0 z-50 py-3 transition-all duration-300">
+        <div class="max-w-container mx-auto px-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
                     {% if theme.logo %}
                         <a href="{% url 'pages:home' %}" class="block transition-transform duration-300 hover:scale-105">
-                            <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-12">
+                            <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-10">
                         </a>
                     {% else %}
                         <a href="{% url 'pages:home' %}" class="text-2xl font-bold font-heading text-gradient">
@@ -165,27 +330,35 @@
                     {% endif %}
                 </div>
                 
-                <!-- Main Navigation -->
-                <nav class="hidden md:block">
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center">
                     <ul class="flex space-x-8">
                         {% if header_menu %}
                             {% for item in header_menu.items.all %}
                                 {% if not item.parent %}
                                     <li class="relative group">
                                         <a href="{{ item.get_url }}" 
-                                           class="py-2 font-medium hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full"
+                                           class="py-2 font-medium hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full flex items-center"
                                            {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
                                             {{ item.title }}
+                                            {% with children=item.children.all %}
+                                                {% if children %}
+                                                    <i class="fas fa-chevron-down text-xs ml-1 opacity-70"></i>
+                                                {% endif %}
+                                            {% endwith %}
                                         </a>
                                         
                                         {% with children=item.children.all %}
                                             {% if children %}
-                                                <ul class="absolute left-0 mt-2 w-56 bg-white shadow-elevated rounded-xl py-2 z-10 hidden group-hover:block animate-fade-in">
+                                                <ul class="absolute left-0 mt-1 w-56 bg-white shadow-elevated rounded-xl overflow-hidden opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-10">
                                                     {% for child in children %}
                                                         <li>
                                                             <a href="{{ child.get_url }}" 
-                                                               class="block px-4 py-2 hover:bg-gray-50 hover:text-primary transition-colors"
+                                                               class="block px-5 py-3 hover:bg-gray-50 hover:text-primary transition-colors flex items-center"
                                                                {% if child.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                                <span class="w-6 text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                                    <i class="fas fa-chevron-right text-xs"></i>
+                                                                </span>
                                                                 {{ child.title }}
                                                             </a>
                                                         </li>
@@ -210,16 +383,24 @@
                     </ul>
                 </nav>
                 
-                <!-- Search Form -->
-                <div class="hidden md:block ml-6">
-                    <form action="{% url 'search:search' %}" method="get" class="flex">
-                        <input type="text" name="q" placeholder="Search..." 
-                               class="w-48 px-4 py-2 border border-gray-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
-                        <button type="submit" class="btn-primary rounded-r-xl rounded-l-none">
-                            <i class="fas fa-search text-sm"></i>
+                <div class="flex items-center space-x-4">
+                    <!-- Search Form -->
+                    <div class="hidden md:block">
+                        <form action="{% url 'search:search' %}" method="get" class="relative">
+                            <input type="text" name="q" placeholder="Search..." 
+                                   class="w-40 focus:w-56 pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all duration-300">
+                            <button type="submit" class="absolute left-0 top-0 h-full flex items-center justify-center w-10 text-gray-500">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden">
+                        <button id="mobile-menu-button" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors focus:outline-none">
+                            <i class="fas fa-bars"></i>
                         </button>
-                    </form>
-                </div>
+                    </div>
                 
                 <!-- User Menu -->
                 <div class="hidden md:flex items-center ml-6">

@@ -150,19 +150,54 @@ CRISPY_TEMPLATE_PACK = 'tailwind'
 # CKEditor settings
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'
 CKEDITOR_CONFIGS = {
     'default': {
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat'],
-            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+        'toolbar': 'Full',
+        'toolbar_Full': [
+            ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
+             'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
             ['Link', 'Unlink', 'Anchor'],
-            ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
+            ['Image', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak'],
             ['Styles', 'Format', 'Font', 'FontSize'],
             ['TextColor', 'BGColor'],
-            ['Maximize', 'Source'],
+            ['Maximize', 'ShowBlocks', 'Source'],
         ],
-        'height': 300,
+        'height': 400,
         'width': '100%',
+        'extraPlugins': ','.join([
+            'uploadimage',  # the upload image feature
+            'autolink',
+            'autoembed',
+            'embedsemantic',
+            'autogrow',
+            'widget',
+            'lineutils',
+            'clipboard',
+            'dialog',
+            'dialogui',
+            'elementspath'
+        ]),
+        'contentsCss': [
+            '/static/css/tailwind.css',
+            'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap',
+        ],
+        'bodyClass': 'prose max-w-none',
+        'allowedContent': True,
+        'removePlugins': 'stylesheetparser',
+        'removeButtons': '',
+        'stylesSet': [
+            {'name': 'Heading 1', 'element': 'h1', 'attributes': {'class': 'text-4xl font-bold mb-4'}},
+            {'name': 'Heading 2', 'element': 'h2', 'attributes': {'class': 'text-3xl font-bold mb-3'}},
+            {'name': 'Heading 3', 'element': 'h3', 'attributes': {'class': 'text-2xl font-bold mb-2'}},
+            {'name': 'Paragraph', 'element': 'p', 'attributes': {'class': 'mb-4'}},
+            {'name': 'Blockquote', 'element': 'blockquote', 'attributes': {'class': 'border-l-4 border-gray-300 pl-4 italic my-4'}},
+            {'name': 'Code Block', 'element': 'pre', 'attributes': {'class': 'bg-gray-100 p-4 rounded my-4'}},
+            {'name': 'Inline Code', 'element': 'code', 'attributes': {'class': 'bg-gray-100 px-1 py-0.5 rounded'}},
+            {'name': 'Primary Button', 'element': 'a', 'attributes': {'class': 'btn btn-primary'}},
+            {'name': 'Secondary Button', 'element': 'a', 'attributes': {'class': 'btn btn-secondary'}},
+            {'name': 'Outline Button', 'element': 'a', 'attributes': {'class': 'btn btn-outline'}},
+        ],
     },
 }

@@ -7,6 +7,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from pages.sitemaps import PageSitemap, CategorySitemap
+from core.admin_dashboard import CustomAdminDashboard
+
+# Customize admin site
+admin.site.site_header = 'djCMS Administration'
+admin.site.site_title = 'djCMS Admin'
+admin.site.index_title = 'Dashboard'
+admin.site.index = CustomAdminDashboard.as_view()
 
 sitemaps = {
     'pages': PageSitemap,
@@ -15,6 +22,7 @@ sitemaps = {
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     
     # Include app URLs

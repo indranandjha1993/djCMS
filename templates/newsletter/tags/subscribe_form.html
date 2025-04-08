@@ -1,31 +1,52 @@
-<div class="bg-white shadow-sm rounded-lg p-6">
-    <h3 class="text-lg font-semibold mb-4">Subscribe to Newsletter</h3>
+<div class="{% if not custom_class %}card shadow-soft p-6{% endif %}">
+    {% if not hide_title %}
+        <h3 class="text-xl font-bold mb-4 {% if is_dark %}text-white{% endif %}">Subscribe to Newsletter</h3>
+        
+        <p class="{% if is_dark %}text-white/80{% else %}text-gray-600{% endif %} text-sm mb-4">
+            Get the latest updates delivered directly to your inbox.
+        </p>
+    {% endif %}
     
-    <p class="text-gray-600 text-sm mb-4">
-        Get the latest updates delivered directly to your inbox.
-    </p>
-    
-    <form action="{{ action_url }}" method="post">
+    <form action="{{ action_url }}" method="post" class="space-y-3">
         {% csrf_token %}
         
-        <div class="mb-3">
+        <div>
             <label for="{{ form.email.id_for_label }}" class="sr-only">Email</label>
-            {{ form.email }}
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-envelope text-gray-400"></i>
+                </div>
+                <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
+                       placeholder="Your email address" required
+                       class="w-full pl-10 pr-4 py-3 bg-white rounded-lg border {% if is_dark %}border-white/20{% else %}border-gray-200{% endif %} focus:outline-none focus:ring-2 focus:ring-primary">
+            </div>
             {% if form.email.errors %}
                 <div class="text-red-500 text-xs mt-1">{{ form.email.errors }}</div>
             {% endif %}
         </div>
         
-        <div class="mb-4">
+        <div>
             <label for="{{ form.name.id_for_label }}" class="sr-only">Name</label>
-            {{ form.name }}
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-user text-gray-400"></i>
+                </div>
+                <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}" 
+                       placeholder="Your name (optional)"
+                       class="w-full pl-10 pr-4 py-3 bg-white rounded-lg border {% if is_dark %}border-white/20{% else %}border-gray-200{% endif %} focus:outline-none focus:ring-2 focus:ring-primary">
+            </div>
             {% if form.name.errors %}
                 <div class="text-red-500 text-xs mt-1">{{ form.name.errors }}</div>
             {% endif %}
         </div>
         
-        <button type="submit" class="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors">
-            Subscribe
+        <button type="submit" class="w-full btn btn-primary py-3 font-medium">
+            <i class="fas fa-paper-plane mr-2"></i>
+            Subscribe Now
         </button>
+        
+        <p class="text-xs text-center {% if is_dark %}text-white/60{% else %}text-gray-500{% endif %}">
+            We respect your privacy. Unsubscribe at any time.
+        </p>
     </form>
 </div>

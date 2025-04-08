@@ -1,102 +1,309 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="max-w-container mx-auto px-4 py-8">
-    {% if page.featured_image %}
-        <div class="mb-8">
-            <img src="{{ page.featured_image.url }}" alt="{{ page.title }}" class="w-full h-auto rounded-lg">
+<!-- Hero Section -->
+{% if page.featured_image %}
+<section class="relative overflow-hidden">
+    <div class="absolute inset-0 z-0">
+        <img src="{{ page.featured_image.url }}" alt="{{ page.title }}" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-dark/80 to-dark/40"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-container mx-auto px-4 py-24 md:py-32">
+        <div class="max-w-3xl">
+            {% if page.title %}
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 text-white animate-fade-in">
+                    {{ page.title }}
+                </h1>
+            {% endif %}
+            
+            {% if page.excerpt %}
+                <div class="text-xl text-white/90 mb-8 animate-slide-up">
+                    {{ page.excerpt }}
+                </div>
+            {% endif %}
+            
+            <div class="flex flex-wrap gap-4 animate-slide-up" style="animation-delay: 0.2s;">
+                <a href="#features" class="btn btn-primary">
+                    <i class="fas fa-rocket mr-2"></i>
+                    Explore Features
+                </a>
+                <a href="{% url 'blog:post_list' %}" class="btn btn-outline border-white text-white hover:bg-white hover:text-dark">
+                    <i class="fas fa-newspaper mr-2"></i>
+                    Read Our Blog
+                </a>
+            </div>
         </div>
-    {% endif %}
-    
-    {% if page.title %}
-        <h1 class="text-4xl font-bold mb-6 text-center">{{ page.title }}</h1>
-    {% endif %}
-    
-    {% if page.excerpt %}
-        <div class="text-xl text-gray-600 mb-8 text-center max-w-3xl mx-auto">
-            {{ page.excerpt }}
+    </div>
+</section>
+{% else %}
+<section class="bg-gradient-to-r from-primary to-primary-dark text-white">
+    <div class="max-w-container mx-auto px-4 py-24 md:py-32">
+        <div class="max-w-3xl">
+            {% if page.title %}
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
+                    {{ page.title }}
+                </h1>
+            {% endif %}
+            
+            {% if page.excerpt %}
+                <div class="text-xl text-white/90 mb-8 animate-slide-up">
+                    {{ page.excerpt }}
+                </div>
+            {% endif %}
+            
+            <div class="flex flex-wrap gap-4 animate-slide-up" style="animation-delay: 0.2s;">
+                <a href="#features" class="btn bg-white text-primary hover:bg-gray-100">
+                    <i class="fas fa-rocket mr-2"></i>
+                    Explore Features
+                </a>
+                <a href="{% url 'blog:post_list' %}" class="btn btn-outline border-white text-white hover:bg-white hover:text-primary">
+                    <i class="fas fa-newspaper mr-2"></i>
+                    Read Our Blog
+                </a>
+            </div>
         </div>
-    {% endif %}
-    
+    </div>
+</section>
+{% endif %}
+
+<div class="max-w-container mx-auto px-4 py-16">
     <!-- Homepage Widget Area -->
-    <div class="mb-12">
+    <div class="mb-16" id="features">
         {% load widget_tags %}
         {% show_widget_area 'homepage' %}
     </div>
     
     <!-- Main Content -->
     {% if page.content %}
-        <div class="bg-white shadow-sm rounded-lg p-8 mb-12">
+        <div class="card shadow-soft p-8 mb-16 animate-fade-in">
             <div class="prose max-w-none">
                 {{ page.content|safe }}
             </div>
         </div>
     {% endif %}
     
+    <!-- Features Section -->
+    <section class="mb-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 font-heading">Why Choose Our CMS</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">A powerful content management system with all the features you need to build and manage your website.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card p-8 text-center animate-scale">
+                <div class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Lightning Fast</h3>
+                <p class="text-gray-600">Optimized for speed and performance to provide the best user experience.</p>
+            </div>
+            
+            <div class="card p-8 text-center animate-scale">
+                <div class="w-16 h-16 bg-secondary/10 text-secondary rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Fully Responsive</h3>
+                <p class="text-gray-600">Looks great on all devices, from mobile phones to desktop computers.</p>
+            </div>
+            
+            <div class="card p-8 text-center animate-scale">
+                <div class="w-16 h-16 bg-accent/10 text-accent rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Secure & Reliable</h3>
+                <p class="text-gray-600">Built with security in mind to keep your website and data safe.</p>
+            </div>
+        </div>
+    </section>
+    
     <!-- Featured Posts Section -->
-    <div class="mb-12">
-        <h2 class="text-2xl font-bold mb-6">Latest Blog Posts</h2>
+    <section class="mb-16">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-bold font-heading gradient-text">Latest Articles</h2>
+            <a href="{% url 'blog:post_list' %}" class="text-primary hover:underline flex items-center">
+                View all articles
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
         
         {% load blog_tags %}
         {% get_recent_posts 3 as recent_posts %}
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {% for post in recent_posts %}
-                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                <div class="card card-hover animate-scale overflow-hidden">
                     {% if post.featured_image %}
-                        <a href="{{ post.get_absolute_url }}">
-                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                        <a href="{{ post.get_absolute_url }}" class="block overflow-hidden">
+                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-52 object-cover transition-transform duration-500 hover:scale-110">
                         </a>
                     {% endif %}
                     
                     <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2">
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            {% for category in post.categories.all %}
+                                <a href="{% url 'blog:category_post_list' category.slug %}" class="bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-full text-xs font-medium transition-colors hover:bg-opacity-20">
+                                    {{ category.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                        
+                        <h3 class="text-xl font-bold mb-3">
                             <a href="{{ post.get_absolute_url }}" class="hover:text-primary transition-colors">
                                 {{ post.title }}
                             </a>
                         </h3>
                         
-                        <div class="text-sm text-gray-500 mb-3">
-                            {{ post.published_at|date:"F j, Y" }} • 
-                            <a href="{% url 'blog:author_post_list' post.author.username %}" class="hover:text-primary transition-colors">
-                                {{ post.author.get_full_name|default:post.author.username }}
-                            </a>
-                        </div>
-                        
                         <p class="text-gray-600 mb-4">
-                            {{ post.excerpt|truncatewords:25 }}
+                            {{ post.excerpt|truncatewords:15 }}
                         </p>
                         
-                        <a href="{{ post.get_absolute_url }}" class="text-primary hover:underline">
-                            Read more →
-                        </a>
+                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                            <div class="flex items-center">
+                                {% if post.author.avatar %}
+                                    <img src="{{ post.author.avatar.url }}" alt="{{ post.author.display_name }}" class="w-8 h-8 rounded-full mr-2 object-cover">
+                                {% else %}
+                                    <div class="w-8 h-8 rounded-full gradient-bg text-white flex items-center justify-center mr-2">
+                                        {{ post.author.username|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <a href="{% url 'blog:author_post_list' post.author.username %}" class="text-sm font-medium hover:text-primary transition-colors">
+                                        {{ post.author.get_full_name|default:post.author.username }}
+                                    </a>
+                                    <div class="text-xs text-gray-500">{{ post.published_at|date:"F j, Y" }}</div>
+                                </div>
+                            </div>
+                            
+                            <a href="{{ post.get_absolute_url }}" class="text-primary hover:underline text-sm font-medium">
+                                Read more
+                            </a>
+                        </div>
                     </div>
                 </div>
             {% empty %}
-                <div class="col-span-3 text-center text-gray-500 py-12">
-                    No posts found.
+                <div class="col-span-3 card p-12 text-center">
+                    <div class="text-6xl text-gray-300 mb-4">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">No posts found</h3>
+                    <p class="text-gray-600 mb-6">
+                        There are no blog posts available at the moment. Please check back later.
+                    </p>
                 </div>
             {% endfor %}
         </div>
         
-        <div class="text-center mt-6">
-            <a href="{% url 'blog:post_list' %}" class="inline-block bg-primary text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors">
-                View All Posts
+        <div class="text-center mt-10">
+            <a href="{% url 'blog:post_list' %}" class="btn btn-primary px-8 py-3">
+                <i class="fas fa-newspaper mr-2"></i>
+                View All Articles
             </a>
         </div>
-    </div>
+    </section>
     
     <!-- Call to Action Section -->
-    <div class="bg-primary bg-opacity-10 rounded-lg p-8 text-center">
-        <h2 class="text-2xl font-bold mb-4">Subscribe to Our Newsletter</h2>
-        <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Stay updated with our latest news, articles, and updates. We'll never spam you or share your email with third parties.
-        </p>
-        
-        <div class="max-w-md mx-auto">
-            {% load newsletter_tags %}
-            {% newsletter_subscribe_form %}
+    <section class="relative overflow-hidden rounded-2xl mb-8">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary to-primary-dark opacity-90"></div>
+        <div class="absolute inset-0 opacity-10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                <defs>
+                    <pattern id="pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <circle cx="20" cy="20" r="2" fill="white" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#pattern)" />
+            </svg>
         </div>
-    </div>
+        
+        <div class="relative z-10 py-16 px-8 md:px-16 text-center">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white font-heading">Subscribe to Our Newsletter</h2>
+                <p class="text-white text-opacity-90 mb-8 text-lg max-w-2xl mx-auto">
+                    Stay updated with our latest news, articles, and updates. We'll never spam you or share your email with third parties.
+                </p>
+                
+                <div class="max-w-md mx-auto">
+                    {% load newsletter_tags %}
+                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-soft">
+                        {% newsletter_subscribe_form %}
+                    </div>
+                </div>
+                
+                <div class="flex justify-center mt-8 space-x-4">
+                    <a href="#" class="text-white hover:text-white/80 transition-colors">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-white/80 transition-colors">
+                        <i class="fab fa-facebook-f text-xl"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-white/80 transition-colors">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-white/80 transition-colors">
+                        <i class="fab fa-linkedin-in text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section class="mb-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 font-heading">What Our Users Say</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Hear from the people who use our CMS to power their websites.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card p-8 shadow-soft">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400 flex">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-6 text-lg italic">
+                    "This CMS has completely transformed how we manage our content. It's intuitive, powerful, and has all the features we need."
+                </p>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 rounded-full gradient-bg text-white flex items-center justify-center mr-4">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold">Sarah Johnson</h4>
+                        <p class="text-gray-500 text-sm">Marketing Director</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card p-8 shadow-soft">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400 flex">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-6 text-lg italic">
+                    "The flexibility and ease of use make this CMS stand out. We've been able to create a beautiful website without any coding knowledge."
+                </p>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 rounded-full gradient-bg text-white flex items-center justify-center mr-4">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold">Michael Chen</h4>
+                        <p class="text-gray-500 text-sm">Small Business Owner</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 {% endblock %}

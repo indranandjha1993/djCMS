@@ -27,9 +27,9 @@ COPY . /app/
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Make entrypoint script executable
-COPY entrypoint.sh /app/
-RUN chmod +x /app/entrypoint.sh
+# Make scripts executable
+COPY entrypoint.sh check_db.py /app/
+RUN chmod +x /app/entrypoint.sh /app/check_db.py
 
 # Run entrypoint script
 CMD ["/app/entrypoint.sh"]

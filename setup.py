@@ -12,36 +12,67 @@ import subprocess
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djCMS.settings')
 django.setup()
 
+def check_tables_exist():
+    """Check if the required database tables exist."""
+    from django.db import connection
+    
+    required_tables = [
+        'core_user',
+        'pages_page',
+        'blog_post',
+        'categories_category',
+        'navigation_menu',
+        'theming_theme',
+        'widgets_widgetarea'
+    ]
+    
+    existing_tables = connection.introspection.table_names()
+    missing_tables = [table for table in required_tables if table not in existing_tables]
+    
+    if missing_tables:
+        print(f"Missing tables: {', '.join(missing_tables)}")
+        return False
+    return True
+
 def setup():
     """Set up the djCMS project."""
     print("Setting up djCMS...")
     
-    # Create migrations for all apps
-    print("Creating migrations...")
-    try:
-        call_command('makemigrations', 'core')
-        call_command('makemigrations', 'theming')
-        call_command('makemigrations', 'pages')
-        call_command('makemigrations', 'categories')
-        call_command('makemigrations', 'navigation')
-        call_command('makemigrations', 'blog')
-        call_command('makemigrations', 'widgets')
-        call_command('makemigrations', 'newsletter')
-        call_command('makemigrations', 'media_library')
-        call_command('makemigrations', 'comments')
-        call_command('makemigrations', 'search')
-    except Exception as e:
-        print(f"Error creating migrations: {e}")
-        print("Continuing with setup...")
-    
-    # Run migrations
-    print("Running migrations...")
-    try:
-        call_command('migrate')
-    except Exception as e:
-        print(f"Error running migrations: {e}")
-        print("Please check your database configuration and try again.")
-        sys.exit(1)
+    # Check if tables exist
+    if not check_tables_exist():
+        print("Required database tables do not exist. Running migrations first...")
+        
+        # Create migrations for all apps
+        print("Creating migrations...")
+        try:
+            call_command('makemigrations', 'core')
+            call_command('makemigrations', 'theming')
+            call_command('makemigrations', 'pages')
+            call_command('makemigrations', 'categories')
+            call_command('makemigrations', 'navigation')
+            call_command('makemigrations', 'blog')
+            call_command('makemigrations', 'widgets')
+            call_command('makemigrations', 'newsletter')
+            call_command('makemigrations', 'media_library')
+            call_command('makemigrations', 'comments')
+            call_command('makemigrations', 'search')
+        except Exception as e:
+            print(f"Error creating migrations: {e}")
+            print("Continuing with setup...")
+        
+        # Run migrations
+        print("Running migrations...")
+        try:
+            call_command('migrate')
+        except Exception as e:
+            print(f"Error running migrations: {e}")
+            print("Please check your database configuration and try again.")
+            sys.exit(1)
+            
+        # Check again after migrations
+        if not check_tables_exist():
+            print("Tables still missing after migrations. Exiting.")
+            sys.exit(1)
     
     # Create superuser
     print("\nCreating superuser...")

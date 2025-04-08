@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 {% load core_tags static %}
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{% block title %}{% if page %}{{ page.meta_title|default:page.title|default:"djCMS" }}{% else %}djCMS{% endif %}{% endblock %}</title>
     
     <!-- Meta tags -->
     <meta name="description" content="{% block meta_description %}{% if page %}{{ page.meta_description|default:'' }}{% endif %}{% endblock %}">
     <meta name="keywords" content="{% block meta_keywords %}{% if page %}{{ page.meta_keywords|default:'' }}{% endif %}{% endblock %}">
+    <meta name="author" content="djCMS">
+    <meta name="theme-color" content="#4F46E5">
     {% if page and page.canonical_url %}<link rel="canonical" href="{{ page.canonical_url }}">{% endif %}
     
     <!-- Open Graph tags -->
@@ -16,48 +19,154 @@
     <meta property="og:description" content="{% block og_description %}{% if page %}{{ page.og_description|default:page.meta_description|default:'' }}{% endif %}{% endblock %}">
     {% if page and page.og_image %}<meta property="og:image" content="{{ page.og_image.url }}">{% endif %}
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="djCMS">
+    
+    <!-- PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="djCMS">
+    <meta name="application-name" content="djCMS">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
     
     <!-- Favicon -->
-    {% if theme.favicon %}<link rel="icon" href="{{ theme.favicon.url }}">{% endif %}
+    {% if theme.favicon %}
+        <link rel="icon" href="{{ theme.favicon.url }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ theme.favicon.url }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ theme.favicon.url }}">
+        <link rel="apple-touch-icon" href="{{ theme.favicon.url }}">
+        <link rel="mask-icon" href="{{ theme.favicon.url }}" color="#4F46E5">
+    {% endif %}
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts - Optimized loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome Icons - With integrity for security -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     
     <!-- Custom CSS -->
     <style>
         :root {
+            /* Primary Colors */
             --primary: #4F46E5;
             --primary-dark: #4338CA;
             --primary-light: #818CF8;
+            --primary-50: #EEF2FF;
+            --primary-100: #E0E7FF;
+            --primary-200: #C7D2FE;
+            --primary-300: #A5B4FC;
+            --primary-400: #818CF8;
+            --primary-500: #6366F1;
+            --primary-600: #4F46E5;
+            --primary-700: #4338CA;
+            --primary-800: #3730A3;
+            --primary-900: #312E81;
+            
+            /* Secondary Colors */
             --secondary: #10B981;
             --secondary-dark: #059669;
+            --secondary-light: #34D399;
+            --secondary-50: #ECFDF5;
+            --secondary-100: #D1FAE5;
+            --secondary-200: #A7F3D0;
+            --secondary-300: #6EE7B7;
+            --secondary-400: #34D399;
+            --secondary-500: #10B981;
+            --secondary-600: #059669;
+            --secondary-700: #047857;
+            --secondary-800: #065F46;
+            --secondary-900: #064E3B;
+            
+            /* Accent Colors */
             --accent: #F59E0B;
+            --accent-dark: #D97706;
+            --accent-light: #FBBF24;
+            
+            /* Neutral Colors */
             --dark: #1F2937;
             --light: #F9FAFB;
             --gray: #6B7280;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            
+            /* Feedback Colors */
             --success: #10B981;
             --danger: #EF4444;
             --warning: #F59E0B;
             --info: #3B82F6;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition-fast: 150ms;
+            --transition-normal: 300ms;
+            --transition-slow: 500ms;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            /* Typography */
+            --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+            --line-height-tight: 1.2;
+            --line-height-normal: 1.5;
+            --line-height-relaxed: 1.75;
+            
+            /* Container */
+            --container-max: 1280px;
+            --container-padding: 1rem;
         }
         
         /* Typography */
         body {
-            font-family: 'Inter', sans-serif;
-            color: #374151;
-            background-color: #F3F4F6;
-            line-height: 1.6;
+            font-family: var(--font-sans);
+            color: var(--gray-700);
+            background-color: var(--gray-100);
+            line-height: var(--line-height-normal);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
         
         h1, h2, h3, h4, h5, h6, .font-heading {
-            font-family: 'Playfair Display', serif;
+            font-family: var(--font-heading);
             font-weight: 700;
-            line-height: 1.2;
+            line-height: var(--line-height-tight);
+            color: var(--gray-900);
+        }
+        
+        /* Focus Styles for Accessibility */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
         
         /* Animations */
@@ -77,15 +186,19 @@
         }
         
         .animate-fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
+            animation: fadeIn 0.5s ease-out forwards;
         }
         
         .animate-slide-up {
-            animation: slideUp 0.6s ease-out forwards;
+            animation: slideUp 0.5s ease-out forwards;
+        }
+        
+        .animate-scale-in {
+            animation: scaleIn 0.3s ease-out forwards;
         }
         
         .animate-scale {
-            transition: transform 0.3s ease-in-out;
+            transition: transform var(--transition-normal) ease;
         }
         
         .animate-scale:hover {
@@ -108,14 +221,15 @@
         /* Cards */
         .card {
             background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal) ease;
         }
         
         .card-hover:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
         }
         
         /* Buttons */
@@ -125,9 +239,45 @@
             justify-content: center;
             padding: 0.5rem 1.25rem;
             font-weight: 500;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal) ease;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.4);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
         }
         
         .btn-primary {
@@ -139,6 +289,10 @@
             background-color: var(--primary-dark);
         }
         
+        .btn-primary:focus {
+            box-shadow: 0 0 0 3px var(--primary-200);
+        }
+        
         .btn-secondary {
             background-color: var(--secondary);
             color: white;
@@ -146,6 +300,10 @@
         
         .btn-secondary:hover {
             background-color: var(--secondary-dark);
+        }
+        
+        .btn-secondary:focus {
+            box-shadow: 0 0 0 3px var(--secondary-200);
         }
         
         .btn-outline {
@@ -159,18 +317,23 @@
             color: white;
         }
         
+        .btn-outline:focus {
+            box-shadow: 0 0 0 3px var(--primary-200);
+        }
+        
         /* Shadows */
         .shadow-soft {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            box-shadow: var(--shadow-md);
         }
         
         .shadow-elevated {
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: var(--shadow-xl);
         }
         
         /* Header */
         header {
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal) ease;
+            backdrop-filter: blur(5px);
         }
         
         /* Custom Utilities */
@@ -188,7 +351,27 @@
         
         /* Responsive Container */
         .max-w-container {
-            max-width: 1280px;
+            max-width: var(--container-max);
+            padding-left: var(--container-padding);
+            padding-right: var(--container-padding);
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Skip to content link for accessibility */
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+        
+        .skip-to-content:focus {
+            top: 0;
         }
     </style>
     
@@ -199,21 +382,63 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "{{ theme.primary_color|default:'#4F46E5' }}",
-                        secondary: "{{ theme.secondary_color|default:'#10B981' }}",
-                        accent: "{{ theme.accent_color|default:'#F43F5E' }}",
-                        dark: "#1E293B",
-                        light: "#F8FAFC",
-                        muted: "#94A3B8",
+                        primary: {
+                            50: "{{ theme.primary_color_50|default:'#EEF2FF' }}",
+                            100: "{{ theme.primary_color_100|default:'#E0E7FF' }}",
+                            200: "{{ theme.primary_color_200|default:'#C7D2FE' }}",
+                            300: "{{ theme.primary_color_300|default:'#A5B4FC' }}",
+                            400: "{{ theme.primary_color_400|default:'#818CF8' }}",
+                            500: "{{ theme.primary_color_500|default:'#6366F1' }}",
+                            600: "{{ theme.primary_color|default:'#4F46E5' }}",
+                            700: "{{ theme.primary_color_700|default:'#4338CA' }}",
+                            800: "{{ theme.primary_color_800|default:'#3730A3' }}",
+                            900: "{{ theme.primary_color_900|default:'#312E81' }}",
+                            DEFAULT: "{{ theme.primary_color|default:'#4F46E5' }}",
+                        },
+                        secondary: {
+                            50: "{{ theme.secondary_color_50|default:'#ECFDF5' }}",
+                            100: "{{ theme.secondary_color_100|default:'#D1FAE5' }}",
+                            200: "{{ theme.secondary_color_200|default:'#A7F3D0' }}",
+                            300: "{{ theme.secondary_color_300|default:'#6EE7B7' }}",
+                            400: "{{ theme.secondary_color_400|default:'#34D399' }}",
+                            500: "{{ theme.secondary_color_500|default:'#10B981' }}",
+                            600: "{{ theme.secondary_color|default:'#059669' }}",
+                            700: "{{ theme.secondary_color_700|default:'#047857' }}",
+                            800: "{{ theme.secondary_color_800|default:'#065F46' }}",
+                            900: "{{ theme.secondary_color_900|default:'#064E3B' }}",
+                            DEFAULT: "{{ theme.secondary_color|default:'#10B981' }}",
+                        },
+                        accent: {
+                            light: "{{ theme.accent_color_light|default:'#FBBF24' }}",
+                            DEFAULT: "{{ theme.accent_color|default:'#F59E0B' }}",
+                            dark: "{{ theme.accent_color_dark|default:'#D97706' }}",
+                        },
+                        dark: "{{ theme.dark_color|default:'#1E293B' }}",
+                        light: "{{ theme.light_color|default:'#F8FAFC' }}",
+                        muted: "{{ theme.muted_color|default:'#94A3B8' }}",
+                        success: "{{ theme.success_color|default:'#10B981' }}",
+                        danger: "{{ theme.danger_color|default:'#EF4444' }}",
+                        warning: "{{ theme.warning_color|default:'#F59E0B' }}",
+                        info: "{{ theme.info_color|default:'#3B82F6' }}",
                     },
                     fontFamily: {
-                        sans: ["{{ theme.font_family|default:'Inter' }}", 'sans-serif'],
-                        heading: ["{{ theme.heading_font_family|default:'Playfair Display' }}", 'serif'],
+                        sans: ["{{ theme.font_family|default:'Inter' }}", 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                        heading: ["{{ theme.heading_font_family|default:'Playfair Display' }}", 'Georgia', 'Times New Roman', 'serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
                     },
                     maxWidth: {
-                        container: "{{ theme.container_width|default:'1200px' }}",
+                        container: "{{ theme.container_width|default:'1280px' }}",
+                        'prose': '65ch',
                     },
                     boxShadow: {
+                        'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                        'DEFAULT': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                        'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+                        'none': 'none',
                         'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
                         'card': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
                         'elevated': '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02)',
@@ -221,13 +446,158 @@
                     transitionProperty: {
                         'height': 'height',
                         'spacing': 'margin, padding',
+                        'width': 'width',
+                        'transform': 'transform',
+                    },
+                    transitionDuration: {
+                        'fast': '150ms',
+                        'normal': '300ms',
+                        'slow': '500ms',
                     },
                     borderRadius: {
+                        'sm': '0.25rem',
+                        'DEFAULT': '0.375rem',
+                        'md': '0.5rem',
+                        'lg': '0.75rem',
                         'xl': '1rem',
                         '2xl': '1.5rem',
+                        'full': '9999px',
+                    },
+                    typography: {
+                        DEFAULT: {
+                            css: {
+                                color: 'var(--gray-700)',
+                                a: {
+                                    color: 'var(--primary)',
+                                    '&:hover': {
+                                        color: 'var(--primary-dark)',
+                                    },
+                                },
+                                h1: {
+                                    fontFamily: 'var(--font-heading)',
+                                    color: 'var(--gray-900)',
+                                },
+                                h2: {
+                                    fontFamily: 'var(--font-heading)',
+                                    color: 'var(--gray-900)',
+                                },
+                                h3: {
+                                    fontFamily: 'var(--font-heading)',
+                                    color: 'var(--gray-900)',
+                                },
+                                h4: {
+                                    fontFamily: 'var(--font-heading)',
+                                    color: 'var(--gray-900)',
+                                },
+                                blockquote: {
+                                    borderLeftColor: 'var(--primary-200)',
+                                    color: 'var(--gray-600)',
+                                },
+                                'code::before': {
+                                    content: '""',
+                                },
+                                'code::after': {
+                                    content: '""',
+                                },
+                                code: {
+                                    fontWeight: '400',
+                                    backgroundColor: 'var(--gray-100)',
+                                    padding: '0.2em 0.4em',
+                                    borderRadius: '0.25rem',
+                                    color: 'var(--primary-700)',
+                                },
+                                pre: {
+                                    backgroundColor: 'var(--gray-800)',
+                                    color: 'var(--gray-100)',
+                                },
+                                'pre code': {
+                                    backgroundColor: 'transparent',
+                                    color: 'inherit',
+                                    padding: '0',
+                                },
+                            },
+                        },
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'scale-in': 'scaleIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                    },
+                    spacing: {
+                        '128': '32rem',
+                        '144': '36rem',
+                    },
+                    zIndex: {
+                        '60': '60',
+                        '70': '70',
+                        '80': '80',
+                        '90': '90',
+                        '100': '100',
                     },
                 }
-            }
+            },
+            plugins: [
+                function({ addBase, theme }) {
+                    addBase({
+                        'html': { fontSize: '16px' },
+                        'body': { 
+                            fontFamily: theme('fontFamily.sans'),
+                            lineHeight: theme('lineHeight.normal'),
+                            color: theme('colors.gray.700'),
+                            backgroundColor: theme('colors.gray.50'),
+                        },
+                        'h1, h2, h3, h4, h5, h6': {
+                            fontFamily: theme('fontFamily.heading'),
+                            fontWeight: theme('fontWeight.bold'),
+                            lineHeight: theme('lineHeight.tight'),
+                            marginBottom: theme('spacing.4'),
+                            color: theme('colors.gray.900'),
+                        },
+                        'h1': { fontSize: theme('fontSize.4xl') },
+                        'h2': { fontSize: theme('fontSize.3xl') },
+                        'h3': { fontSize: theme('fontSize.2xl') },
+                        'h4': { fontSize: theme('fontSize.xl') },
+                        'h5': { fontSize: theme('fontSize.lg') },
+                        'h6': { fontSize: theme('fontSize.base') },
+                        'a': {
+                            color: theme('colors.primary.DEFAULT'),
+                            textDecoration: 'none',
+                            transition: 'all 0.3s ease',
+                        },
+                        'a:hover': {
+                            color: theme('colors.primary.700'),
+                        },
+                        'p': {
+                            marginBottom: theme('spacing.4'),
+                        },
+                        'ul, ol': {
+                            paddingLeft: theme('spacing.6'),
+                            marginBottom: theme('spacing.4'),
+                        },
+                        'li': {
+                            marginBottom: theme('spacing.2'),
+                        },
+                        'img': {
+                            maxWidth: '100%',
+                            height: 'auto',
+                        },
+                    });
+                }
+            ]
         }
     </script>
     
@@ -313,56 +683,96 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-to-content">Skip to content</a>
+    
     <!-- Header -->
-    <header class="bg-white shadow-soft sticky top-0 z-50 py-3 transition-all duration-300">
+    <header class="bg-white/95 shadow-md sticky top-0 z-50 transition-all duration-300 backdrop-blur-sm">
         <div class="max-w-container mx-auto px-4">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center">
+            <!-- Top Bar - Optional for contact info, social links, etc. -->
+            <div class="hidden lg:flex justify-between items-center py-2 border-b border-gray-100 text-sm">
+                <div class="flex items-center space-x-6">
+                    <a href="mailto:info@example.com" class="flex items-center text-gray-600 hover:text-primary transition-colors">
+                        <i class="fas fa-envelope mr-2 text-primary-400" aria-hidden="true"></i>
+                        <span>info@example.com</span>
+                    </a>
+                    <a href="tel:+1234567890" class="flex items-center text-gray-600 hover:text-primary transition-colors">
+                        <i class="fas fa-phone-alt mr-2 text-primary-400" aria-hidden="true"></i>
+                        <span>+1 (234) 567-890</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="text-gray-600 hover:text-primary transition-colors" aria-label="Twitter">
+                        <i class="fab fa-twitter" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-primary transition-colors" aria-label="Facebook">
+                        <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-primary transition-colors" aria-label="Instagram">
+                        <i class="fab fa-instagram" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-primary transition-colors" aria-label="GitHub">
+                        <i class="fab fa-github" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Navigation Bar -->
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
                     {% if theme.logo %}
-                        <a href="{% url 'pages:home' %}" class="block transition-transform duration-300 hover:scale-105">
+                        <a href="{% url 'pages:home' %}" class="block transition-transform duration-300 hover:scale-105" aria-label="Home">
                             <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-10">
                         </a>
                     {% else %}
-                        <a href="{% url 'pages:home' %}" class="text-2xl font-bold font-heading text-gradient">
+                        <a href="{% url 'pages:home' %}" class="text-2xl font-bold font-heading text-gradient" aria-label="Home">
                             djCMS
                         </a>
                     {% endif %}
                 </div>
                 
-                <!-- Desktop Navigation -->
-                <nav class="hidden md:flex items-center">
-                    <ul class="flex space-x-8">
+                <!-- Desktop Navigation - Compact with Active Underline -->
+                <nav class="hidden lg:flex items-center flex-1 justify-center" aria-label="Main navigation">
+                    <ul class="flex items-center space-x-6">
                         {% if header_menu %}
                             {% for item in header_menu.items.all %}
                                 {% if not item.parent %}
                                     <li class="relative group">
-                                        <a href="{{ item.get_url }}" 
-                                           class="py-2 font-medium hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full flex items-center"
-                                           {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
-                                            {{ item.title }}
-                                            {% with children=item.children.all %}
-                                                {% if children %}
-                                                    <i class="fas fa-chevron-down text-xs ml-1 opacity-70"></i>
-                                                {% endif %}
-                                            {% endwith %}
-                                        </a>
-                                        
                                         {% with children=item.children.all %}
+                                            <a href="{{ item.get_url }}" 
+                                               class="px-2 py-4 font-medium text-gray-800 hover:text-primary transition-colors relative 
+                                                     {% if request.path == item.get_url %}text-primary after:w-full{% else %}after:w-0{% endif %}
+                                                     after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full flex items-center"
+                                               {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}
+                                               {% if children %}aria-expanded="false" aria-haspopup="true"{% endif %}>
+                                                {{ item.title }}
+                                                {% if children %}
+                                                    <i class="fas fa-chevron-down text-xs ml-1 transition-transform duration-300 group-hover:rotate-180" aria-hidden="true"></i>
+                                                {% endif %}
+                                            </a>
+                                            
                                             {% if children %}
-                                                <ul class="absolute left-0 mt-1 w-56 bg-white shadow-elevated rounded-xl overflow-hidden opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-10">
-                                                    {% for child in children %}
-                                                        <li>
-                                                            <a href="{{ child.get_url }}" 
-                                                               class="block px-5 py-3 hover:bg-gray-50 hover:text-primary transition-colors flex items-center"
-                                                               {% if child.target_blank %}target="_blank" rel="noopener"{% endif %}>
-                                                                <span class="w-6 text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                                    <i class="fas fa-chevron-right text-xs"></i>
-                                                                </span>
-                                                                {{ child.title }}
-                                                            </a>
-                                                        </li>
-                                                    {% endfor %}
-                                                </ul>
+                                                <div class="absolute left-1/2 -translate-x-1/2 mt-0 pt-2 w-56 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-10">
+                                                    <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100">
+                                                        <ul role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
+                                                            {% for child in children %}
+                                                                <li role="none" class="border-b border-gray-50 last:border-0">
+                                                                    <a href="{{ child.get_url }}" 
+                                                                       class="block px-4 py-2.5 hover:bg-gray-50 hover:text-primary transition-colors flex items-center group/item
+                                                                              {% if request.path == child.get_url %}text-primary bg-gray-50 border-l-2 border-primary{% else %}border-l-2 border-transparent{% endif %}"
+                                                                       {% if child.target_blank %}target="_blank" rel="noopener"{% endif %}
+                                                                       role="menuitem">
+                                                                        <span class="w-5 text-primary opacity-0 group-hover/item:opacity-100 transition-all duration-300" aria-hidden="true">
+                                                                            <i class="fas fa-chevron-right text-xs group-hover/item:translate-x-1 transition-transform duration-300"></i>
+                                                                        </span>
+                                                                        <span>{{ child.title }}</span>
+                                                                    </a>
+                                                                </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             {% endif %}
                                         {% endwith %}
                                     </li>
@@ -370,425 +780,891 @@
                             {% endfor %}
                         {% endif %}
                         <li class="relative group">
-                            <a href="{% url 'blog:post_list' %}" class="py-2 font-medium hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
+                            <a href="{% url 'blog:post_list' %}" 
+                               class="px-2 py-4 font-medium text-gray-800 hover:text-primary transition-colors relative
+                                     {% if 'blog' in request.path %}text-primary after:w-full{% else %}after:w-0{% endif %}
+                                     after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
                                 Blog
                             </a>
                         </li>
                         <li class="relative group">
-                            <a href="{% url 'core:contact' %}" class="py-2 font-medium hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
+                            <a href="{% url 'core:contact' %}" 
+                               class="px-2 py-4 font-medium text-gray-800 hover:text-primary transition-colors relative
+                                     {% if 'contact' in request.path %}text-primary after:w-full{% else %}after:w-0{% endif %}
+                                     after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
                                 Contact
                             </a>
                         </li>
                     </ul>
                 </nav>
                 
-                <div class="flex items-center space-x-4">
-                    <!-- Search Form -->
-                    <div class="hidden md:block">
-                        <form action="{% url 'search:search' %}" method="get" class="relative">
-                            <input type="text" name="q" placeholder="Search..." 
-                                   class="w-40 focus:w-56 pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all duration-300">
-                            <button type="submit" class="absolute left-0 top-0 h-full flex items-center justify-center w-10 text-gray-500">
-                                <i class="fas fa-search"></i>
+                <!-- Right Side Actions -->
+                <div class="flex items-center space-x-3">
+                    <!-- Search Button (Triggers Modal) -->
+                    <button type="button" id="search-button" class="p-2.5 text-gray-600 hover:text-primary hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg" aria-label="Search">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </button>
+                    
+                    <!-- User Menu -->
+                    <div class="hidden md:block relative">
+                        {% if user.is_authenticated %}
+                            <div class="relative">
+                                <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 hover:bg-gray-100 px-3 py-2 rounded-lg transition-all duration-300" aria-expanded="false" aria-haspopup="true">
+                                    {% if user.avatar %}
+                                        <img src="{{ user.avatar.url }}" alt="" class="w-8 h-8 rounded-full object-cover border-2 border-primary">
+                                    {% else %}
+                                        <div class="w-8 h-8 rounded-full gradient-bg text-white flex items-center justify-center" aria-hidden="true">
+                                            {{ user.username|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                    <span class="font-medium">{{ user.display_name }}</span>
+                                    <i class="fas fa-chevron-down text-xs text-gray-500 transition-transform duration-300" id="user-menu-arrow" aria-hidden="true"></i>
+                                </button>
+                                
+                                <div id="user-dropdown-menu" class="absolute right-0 mt-1 w-64 bg-white shadow-lg rounded-lg py-1 z-10 hidden animate-fade-in border border-gray-100" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
+                                    <div class="px-4 py-2 border-b border-gray-100">
+                                        <p class="text-xs text-gray-500">Signed in as</p>
+                                        <p class="font-medium text-gray-900 text-sm truncate">{{ user.email }}</p>
+                                    </div>
+                                    <a href="{% url 'core:profile' %}" class="flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors group" role="menuitem">
+                                        <i class="fas fa-user-circle mr-3 text-primary w-5 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                        <span>Profile</span>
+                                    </a>
+                                    <a href="{% url 'blog:author_dashboard' %}" class="flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors group" role="menuitem">
+                                        <i class="fas fa-pen-fancy mr-3 text-primary w-5 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                        <span>Author Dashboard</span>
+                                    </a>
+                                    {% if user.is_staff %}
+                                        <a href="{% url 'admin:index' %}" class="flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors group" role="menuitem">
+                                            <i class="fas fa-cog mr-3 text-primary w-5 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                            <span>Admin</span>
+                                        </a>
+                                    {% endif %}
+                                    <div class="border-t border-gray-100 my-1" role="none"></div>
+                                    <form action="{% url 'core:logout' %}" method="post" class="m-0">
+                                        {% csrf_token %}
+                                        <button type="submit" class="flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors group w-full text-left" role="menuitem">
+                                            <i class="fas fa-sign-out-alt mr-3 text-primary w-5 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                            <span>Log Out</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="flex items-center space-x-2">
+                                <a href="{% url 'core:register' %}" class="px-4 py-2 text-gray-700 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors font-medium">
+                                    Sign Up
+                                </a>
+                                <a href="{% url 'core:login' %}" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors font-medium">
+                                    Log In
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button class="lg:hidden p-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary" id="mobile-menu-button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle menu">
+                        <i class="fas fa-bars text-gray-700" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Modal (Hidden by default) -->
+            <div id="search-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-start justify-center pt-20">
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden animate-scale-in">
+                    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="text-lg font-bold">Search</h3>
+                        <button id="close-search" class="p-1 rounded-full hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <form action="{% url 'search:search' %}" method="get" class="flex" role="search">
+                            <label for="modal-search" class="sr-only">Search</label>
+                            <input type="text" id="modal-search" name="q" placeholder="Search for anything..." 
+                                   class="flex-grow px-4 py-3 border border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg" autofocus>
+                            <button type="submit" class="btn-primary rounded-r-lg rounded-l-none px-6" aria-label="Search">
+                                <i class="fas fa-search mr-2" aria-hidden="true"></i>
+                                <span>Search</span>
+                            </button>
+                        </form>
+                        <div class="mt-4 text-sm text-gray-500">
+                            <p>Popular searches: <a href="{% url 'search:search' %}?q=blog" class="text-primary hover:underline">blog</a>, <a href="{% url 'search:search' %}?q=tutorial" class="text-primary hover:underline">tutorial</a>, <a href="{% url 'search:search' %}?q=guide" class="text-primary hover:underline">guide</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation Drawer - PWA Optimized -->
+            <div class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden" id="mobile-menu-backdrop" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+                <div id="mobile-menu" class="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto flex flex-col" aria-labelledby="mobile-menu-button">
+                    <!-- Mobile Menu Header with Logo -->
+                    <div class="sticky top-0 z-10 flex justify-between items-center p-4 border-b border-gray-100 bg-white">
+                        {% if theme.logo %}
+                            <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-8">
+                        {% else %}
+                            <span class="text-xl font-bold font-heading text-gradient">djCMS</span>
+                        {% endif %}
+                        <button id="close-mobile-menu" class="p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Close menu">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Mobile User Menu (if authenticated) -->
+                    {% if user.is_authenticated %}
+                        <div class="p-4 border-b border-gray-100 flex items-center bg-gray-50">
+                            {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" alt="" class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+                            {% else %}
+                                <div class="w-10 h-10 rounded-full gradient-bg text-white flex items-center justify-center" aria-hidden="true">
+                                    {{ user.username|first|upper }}
+                                </div>
+                            {% endif %}
+                            <div class="ml-3 flex-1">
+                                <p class="font-medium text-gray-900">{{ user.display_name }}</p>
+                                <p class="text-xs text-gray-500 truncate">{{ user.email }}</p>
+                            </div>
+                            <a href="{% url 'core:profile' %}" class="p-2 text-primary hover:text-primary-dark hover:bg-gray-200 rounded-full transition-colors" aria-label="Edit profile">
+                                <i class="fas fa-user-edit" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Mobile Search Form -->
+                    <div class="p-4 border-b border-gray-100">
+                        <form action="{% url 'search:search' %}" method="get" class="relative" role="search">
+                            <label for="mobile-search" class="sr-only">Search</label>
+                            <input type="text" id="mobile-search" name="q" placeholder="Search..." 
+                                   class="w-full px-4 py-3 pl-10 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all">
+                            <button type="submit" class="absolute left-0 top-0 h-full flex items-center justify-center w-10 text-gray-500" aria-label="Search">
+                                <i class="fas fa-search" aria-hidden="true"></i>
                             </button>
                         </form>
                     </div>
                     
-                    <!-- Mobile Menu Button -->
-                    <div class="md:hidden">
-                        <button id="mobile-menu-button" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors focus:outline-none">
-                            <i class="fas fa-bars"></i>
-                        </button>
-                    </div>
-                
-                <!-- User Menu -->
-                <div class="hidden md:flex items-center ml-6">
-                    {% if user.is_authenticated %}
-                        <div class="relative group">
-                            <button class="flex items-center space-x-2 focus:outline-none bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-xl transition-colors">
-                                {% if user.avatar %}
-                                    <img src="{{ user.avatar.url }}" alt="{{ user.display_name }}" class="w-8 h-8 rounded-full object-cover border-2 border-primary">
-                                {% else %}
-                                    <div class="w-8 h-8 rounded-full gradient-bg text-white flex items-center justify-center">
-                                        {{ user.username|first|upper }}
-                                    </div>
-                                {% endif %}
-                                <span class="font-medium">{{ user.display_name }}</span>
-                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
-                            </button>
+                    <!-- Mobile Navigation Links -->
+                    <nav aria-label="Mobile navigation" class="flex-grow overflow-y-auto overscroll-contain p-4">
+                        <ul class="space-y-2">
+                            <li>
+                                <a href="{% url 'pages:home' %}" 
+                                   class="flex items-center px-4 py-3 rounded-lg font-medium {% if request.path == '/' %}bg-primary/10 text-primary border-l-2 border-primary{% else %}text-gray-800 hover:bg-gray-100{% endif %} transition-colors">
+                                    <i class="fas fa-home mr-3 w-5 text-center" aria-hidden="true"></i>
+                                    <span>Home</span>
+                                </a>
+                            </li>
                             
-                            <div class="absolute right-0 mt-2 w-56 bg-white shadow-elevated rounded-xl py-2 z-10 hidden group-hover:block animate-fade-in">
-                                <a href="{% url 'core:profile' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors">
-                                    <i class="fas fa-user-circle mr-2 text-primary"></i>
-                                    Profile
-                                </a>
-                                <a href="{% url 'blog:author_dashboard' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors">
-                                    <i class="fas fa-pen-fancy mr-2 text-primary"></i>
-                                    Author Dashboard
-                                </a>
-                                {% if user.is_staff %}
-                                    <a href="{% url 'admin:index' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors">
-                                        <i class="fas fa-cog mr-2 text-primary"></i>
-                                        Admin
-                                    </a>
-                                {% endif %}
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <a href="{% url 'core:logout' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors">
-                                    <i class="fas fa-sign-out-alt mr-2 text-primary"></i>
-                                    Log Out
-                                </a>
-                            </div>
-                        </div>
-                    {% else %}
-                        <a href="{% url 'core:login' %}" class="btn btn-primary">
-                            <i class="fas fa-sign-in-alt mr-2"></i>
-                            Log In
-                        </a>
-                    {% endif %}
-                </div>
-                
-                <!-- Mobile Menu Button -->
-                <button class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" id="mobile-menu-button">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-            </div>
-            
-            <!-- Mobile Navigation -->
-            <div class="md:hidden hidden animate-fade-in" id="mobile-menu">
-                <!-- Mobile Search Form -->
-                <div class="mb-4 mt-4">
-                    <form action="{% url 'search:search' %}" method="get" class="flex">
-                        <input type="text" name="q" placeholder="Search..." 
-                               class="flex-grow px-4 py-2 border border-gray-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
-                        <button type="submit" class="btn-primary rounded-r-xl rounded-l-none">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
-                </div>
-                
-                <ul class="space-y-3 pb-4">
-                    {% if header_menu %}
-                        {% for item in header_menu.items.all %}
-                            {% if not item.parent %}
-                                <li>
-                                    <a href="{{ item.get_url }}" 
-                                       class="flex justify-between items-center py-2 font-medium hover:text-primary transition-colors"
-                                       {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
-                                        {{ item.title }}
-                                        {% with children=item.children.all %}
-                                            {% if children %}
-                                                <i class="fas fa-chevron-right text-xs text-gray-400"></i>
-                                            {% endif %}
-                                        {% endwith %}
-                                    </a>
-                                    
-                                    {% with children=item.children.all %}
-                                        {% if children %}
-                                            <ul class="pl-4 mt-2 space-y-2 border-l-2 border-gray-100">
-                                                {% for child in children %}
-                                                    <li>
-                                                        <a href="{{ child.get_url }}" 
-                                                           class="block py-1 hover:text-primary transition-colors"
-                                                           {% if child.target_blank %}target="_blank" rel="noopener"{% endif %}>
-                                                            {{ child.title }}
+                            {% if header_menu %}
+                                {% for item in header_menu.items.all %}
+                                    {% if not item.parent %}
+                                        <li>
+                                            {% with children=item.children.all %}
+                                                {% if children %}
+                                                    <button type="button" 
+                                                            class="mobile-dropdown-toggle w-full flex justify-between items-center px-4 py-3 rounded-lg font-medium {% if request.path == item.get_url %}bg-primary/10 text-primary{% else %}text-gray-800 hover:bg-gray-100{% endif %} cursor-pointer transition-colors"
+                                                            aria-expanded="false">
+                                                        <span class="flex items-center">
+                                                            <i class="fas fa-folder mr-3 w-5 text-center" aria-hidden="true"></i>
+                                                            <span>{{ item.title }}</span>
+                                                        </span>
+                                                        <i class="fas fa-chevron-down text-sm transition-transform duration-300" aria-hidden="true"></i>
+                                                    </button>
+                                                    <div class="hidden mobile-dropdown-menu mt-1 mb-2 ml-4 pl-2 border-l-2 border-gray-200 space-y-1">
+                                                        <a href="{{ item.get_url }}" 
+                                                           class="flex items-center px-4 py-2 rounded-lg {% if request.path == item.get_url %}bg-primary/10 text-primary font-medium{% else %}text-gray-700 hover:bg-gray-100{% endif %} transition-colors"
+                                                           {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                            <i class="fas fa-link mr-3 w-5 text-center opacity-75" aria-hidden="true"></i>
+                                                            <span>{{ item.title }} Overview</span>
                                                         </a>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% endif %}
-                                    {% endwith %}
-                                </li>
+                                                        {% for child in children %}
+                                                            <a href="{{ child.get_url }}" 
+                                                               class="flex items-center px-4 py-2 rounded-lg {% if request.path == child.get_url %}bg-primary/10 text-primary font-medium{% else %}text-gray-700 hover:bg-gray-100{% endif %} transition-colors"
+                                                               {% if child.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                                <i class="fas fa-angle-right mr-3 w-5 text-center opacity-75" aria-hidden="true"></i>
+                                                                <span>{{ child.title }}</span>
+                                                            </a>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <a href="{{ item.get_url }}" 
+                                                       class="flex items-center px-4 py-3 rounded-lg font-medium {% if request.path == item.get_url %}bg-primary/10 text-primary border-l-2 border-primary{% else %}text-gray-800 hover:bg-gray-100{% endif %} transition-colors"
+                                                       {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                        <i class="fas fa-link mr-3 w-5 text-center" aria-hidden="true"></i>
+                                                        <span>{{ item.title }}</span>
+                                                    </a>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
                             {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    <li>
-                        <a href="{% url 'blog:post_list' %}" class="block py-2 font-medium hover:text-primary transition-colors">
-                            Blog
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'core:contact' %}" class="block py-2 font-medium hover:text-primary transition-colors">
-                            Contact
-                        </a>
-                    </li>
-                    
-                    <!-- Mobile User Menu -->
-                    <li class="border-t border-gray-200 mt-4 pt-4">
-                        {% if user.is_authenticated %}
-                            <div class="flex items-center mb-4">
-                                {% if user.avatar %}
-                                    <img src="{{ user.avatar.url }}" alt="{{ user.display_name }}" class="w-10 h-10 rounded-full object-cover border-2 border-primary">
-                                {% else %}
-                                    <div class="w-10 h-10 rounded-full gradient-bg text-white flex items-center justify-center">
-                                        {{ user.username|first|upper }}
-                                    </div>
-                                {% endif %}
-                                <span class="ml-3 font-medium">{{ user.display_name }}</span>
-                            </div>
-                            <a href="{% url 'core:profile' %}" class="flex items-center py-2 hover:text-primary transition-colors">
-                                <i class="fas fa-user-circle mr-2 text-primary"></i>
-                                Profile
-                            </a>
-                            <a href="{% url 'blog:author_dashboard' %}" class="flex items-center py-2 hover:text-primary transition-colors">
-                                <i class="fas fa-pen-fancy mr-2 text-primary"></i>
-                                Author Dashboard
-                            </a>
-                            {% if user.is_staff %}
-                                <a href="{% url 'admin:index' %}" class="flex items-center py-2 hover:text-primary transition-colors">
-                                    <i class="fas fa-cog mr-2 text-primary"></i>
-                                    Admin
+                            
+                            <li>
+                                <a href="{% url 'blog:post_list' %}" 
+                                   class="flex items-center px-4 py-3 rounded-lg font-medium {% if 'blog' in request.path %}bg-primary/10 text-primary border-l-2 border-primary{% else %}text-gray-800 hover:bg-gray-100{% endif %} transition-colors">
+                                    <i class="fas fa-blog mr-3 w-5 text-center" aria-hidden="true"></i>
+                                    <span>Blog</span>
                                 </a>
-                            {% endif %}
-                            <a href="{% url 'core:logout' %}" class="flex items-center py-2 hover:text-primary transition-colors">
-                                <i class="fas fa-sign-out-alt mr-2 text-primary"></i>
-                                Log Out
-                            </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'core:contact' %}" 
+                                   class="flex items-center px-4 py-3 rounded-lg font-medium {% if 'contact' in request.path %}bg-primary/10 text-primary border-l-2 border-primary{% else %}text-gray-800 hover:bg-gray-100{% endif %} transition-colors">
+                                    <i class="fas fa-envelope mr-3 w-5 text-center" aria-hidden="true"></i>
+                                    <span>Contact</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    
+                    <!-- Mobile Action Buttons -->
+                    <div class="p-4 border-t border-gray-100">
+                        {% if user.is_authenticated %}
+                            <div class="grid grid-cols-2 gap-3">
+                                {% if user.is_staff %}
+                                    <a href="{% url 'admin:index' %}" class="flex justify-center items-center px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-colors">
+                                        <i class="fas fa-cog mr-2" aria-hidden="true"></i>
+                                        <span>Admin</span>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'blog:author_dashboard' %}" class="flex justify-center items-center px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-colors">
+                                        <i class="fas fa-pen-fancy mr-2" aria-hidden="true"></i>
+                                        <span>Dashboard</span>
+                                    </a>
+                                {% endif %}
+                                <form action="{% url 'core:logout' %}" method="post" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-full flex justify-center items-center px-4 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors">
+                                        <i class="fas fa-sign-out-alt mr-2" aria-hidden="true"></i>
+                                        <span>Log Out</span>
+                                    </button>
+                                </form>
+                            </div>
                         {% else %}
-                            <a href="{% url 'core:login' %}" class="btn btn-primary w-full justify-center">
-                                <i class="fas fa-sign-in-alt mr-2"></i>
-                                Log In
-                            </a>
+                            <div class="grid grid-cols-2 gap-3">
+                                <a href="{% url 'core:register' %}" class="flex justify-center items-center px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-colors">
+                                    <i class="fas fa-user-plus mr-2" aria-hidden="true"></i>
+                                    <span>Sign Up</span>
+                                </a>
+                                <a href="{% url 'core:login' %}" class="flex justify-center items-center px-4 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors">
+                                    <i class="fas fa-sign-in-alt mr-2" aria-hidden="true"></i>
+                                    <span>Log In</span>
+                                </a>
+                            </div>
                         {% endif %}
-                    </li>
-                </ul>
+                    </div>
+                    
+                    <!-- Social Links & Copyright -->
+                    <div class="p-4 border-t border-gray-100 mt-auto">
+                        <div class="flex justify-center space-x-3">
+                            <a href="#" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors" aria-label="Twitter">
+                                <i class="fab fa-twitter text-gray-600" aria-hidden="true"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors" aria-label="Facebook">
+                                <i class="fab fa-facebook-f text-gray-600" aria-hidden="true"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors" aria-label="Instagram">
+                                <i class="fab fa-instagram text-gray-600" aria-hidden="true"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors" aria-label="GitHub">
+                                <i class="fab fa-github text-gray-600" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                        <p class="text-center text-xs text-gray-500 mt-4">&copy; {% now "Y" %} djCMS. All rights reserved.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
     
     <!-- Main Content -->
-    <main class="flex-grow">
+    <main class="flex-grow" id="main-content">
         {% block content %}{% endblock %}
     </main>
     
+    <!-- Back to top button -->
+    <button id="back-to-top" aria-label="Back to top" class="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-primary text-white shadow-lg transform transition-transform duration-300 scale-0 hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+        <i class="fas fa-arrow-up" aria-hidden="true"></i>
+    </button>
+    
     <!-- Footer -->
-    <footer class="bg-dark text-white py-16 mt-16">
+    <footer class="bg-gradient-to-br from-gray-900 to-gray-800 text-white pt-16 pb-8 mt-16" role="contentinfo">
+        {% load widget_tags %}
         <div class="max-w-container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="md:col-span-1">
-                    {% load widget_tags %}
-                    {% with template_name="widgets/footer_widget.html" %}
-                        {% show_widget_area 'footer-left' %}
-                    {% endwith %}
-                    
-                    {% if not widgets %}
-                        <div class="mb-6">
-                            {% if theme.logo %}
-                                <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-10 mb-4">
-                            {% else %}
-                                <h2 class="text-2xl font-bold font-heading text-gradient mb-4">djCMS</h2>
-                            {% endif %}
-                            <p class="text-gray-300">A flexible CMS platform built with Django and Tailwind CSS.</p>
-                        </div>
-                        
-                        <div class="flex space-x-4 mt-6">
-                            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-primary flex items-center justify-center transition-colors">
-                                <i class="fab fa-twitter text-white"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-primary flex items-center justify-center transition-colors">
-                                <i class="fab fa-facebook-f text-white"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-primary flex items-center justify-center transition-colors">
-                                <i class="fab fa-instagram text-white"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-primary flex items-center justify-center transition-colors">
-                                <i class="fab fa-github text-white"></i>
-                            </a>
-                        </div>
+            <!-- Footer Top Section with Logo and Newsletter -->
+            <div class="flex flex-col lg:flex-row justify-between items-center mb-12 pb-12 border-b border-gray-700/50">
+                <div class="mb-8 lg:mb-0 text-center lg:text-left">
+                    {% if theme.logo %}
+                        <img src="{{ theme.logo.url }}" alt="{{ site_name }}" class="h-12 mb-4 mx-auto lg:mx-0">
+                    {% else %}
+                        <h2 class="text-3xl font-bold font-heading text-gradient mb-4">djCMS</h2>
                     {% endif %}
+                    <p class="text-gray-300 max-w-md">A flexible CMS platform built with Django and Tailwind CSS, designed for modern web development.</p>
                 </div>
                 
-                <div class="md:col-span-1">
+                <div class="w-full max-w-md">
+                    <h4 class="font-bold text-lg mb-3 text-center lg:text-left">Subscribe to Our Newsletter</h4>
+                    <form class="flex" aria-label="Newsletter subscription">
+                        <label for="footer-email" class="sr-only">Email address</label>
+                        <input type="email" id="footer-email" placeholder="Your email address" 
+                               class="flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                        <button type="submit" class="bg-primary hover:bg-primary-dark px-6 rounded-r-lg text-white transition-colors" aria-label="Subscribe">
+                            <span class="hidden sm:inline mr-2">Subscribe</span>
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                    <p class="text-gray-400 text-sm mt-2 text-center lg:text-left">Get the latest updates and news directly to your inbox.</p>
+                </div>
+            </div>
+            
+            <!-- Footer Main Links Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <!-- Quick Links Column -->
+                <div>
                     {% with template_name="widgets/footer_widget.html" %}
                         {% show_widget_area 'footer-center-left' %}
                     {% endwith %}
                     
                     {% if not widgets %}
-                        <h3 class="text-xl font-bold font-heading mb-6">Quick Links</h3>
-                        <ul class="space-y-3">
-                            <li>
-                                <a href="{% url 'pages:home' %}" class="text-gray-300 hover:text-white transition-colors flex items-center">
-                                    <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'blog:post_list' %}" class="text-gray-300 hover:text-white transition-colors flex items-center">
-                                    <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
-                                    Blog
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'core:contact' %}" class="text-gray-300 hover:text-white transition-colors flex items-center">
-                                    <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
-                                    Contact
-                                </a>
-                            </li>
-                            {% if footer_menu %}
-                                {% for item in footer_menu.items.all %}
-                                    {% if not item.parent and forloop.counter <= 3 %}
-                                        <li>
-                                            <a href="{{ item.get_url }}" 
-                                               class="text-gray-300 hover:text-white transition-colors flex items-center"
-                                               {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
-                                                <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
-                                                {{ item.title }}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        </ul>
+                        <h3 class="text-xl font-bold font-heading mb-6 pb-2 border-b border-primary/30">Quick Links</h3>
+                        <nav aria-label="Quick links">
+                            <ul class="space-y-3">
+                                <li>
+                                    <a href="{% url 'pages:home' %}" class="text-gray-300 hover:text-white transition-colors group focus:outline-none focus:text-white flex items-center">
+                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                        <span>Home</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'blog:post_list' %}" class="text-gray-300 hover:text-white transition-colors group focus:outline-none focus:text-white flex items-center">
+                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                        <span>Blog</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'core:contact' %}" class="text-gray-300 hover:text-white transition-colors group focus:outline-none focus:text-white flex items-center">
+                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                        <span>Contact</span>
+                                    </a>
+                                </li>
+                                {% if footer_menu %}
+                                    {% for item in footer_menu.items.all %}
+                                        {% if not item.parent and forloop.counter <= 3 %}
+                                            <li>
+                                                <a href="{{ item.get_url }}" 
+                                                   class="text-gray-300 hover:text-white transition-colors group focus:outline-none focus:text-white flex items-center"
+                                                   {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                    <i class="fas fa-chevron-right text-xs mr-2 text-primary group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                                    <span>{{ item.title }}</span>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </ul>
+                        </nav>
                     {% endif %}
                 </div>
                 
-                <div class="md:col-span-1">
+                <!-- Resources Column -->
+                <div>
                     {% with template_name="widgets/footer_widget.html" %}
                         {% show_widget_area 'footer-center-right' %}
                     {% endwith %}
                     
                     {% if not widgets %}
-                        <h3 class="text-xl font-bold font-heading mb-6">Resources</h3>
-                        <ul class="space-y-3">
-                            {% if footer_menu %}
-                                {% for item in footer_menu.items.all %}
-                                    {% if not item.parent and forloop.counter > 3 %}
-                                        <li>
-                                            <a href="{{ item.get_url }}" 
-                                               class="text-gray-300 hover:text-white transition-colors flex items-center"
-                                               {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
-                                                <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
-                                                {{ item.title }}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            {% else %}
-                                <li>
-                                    <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center">
-                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
-                                        Documentation
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center">
-                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
-                                        Tutorials
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center">
-                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
-                                        API Reference
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center">
-                                        <i class="fas fa-chevron-right text-xs mr-2 text-primary"></i>
-                                        Support
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
+                        <h3 class="text-xl font-bold font-heading mb-6 pb-2 border-b border-primary/30">Resources</h3>
+                        <nav aria-label="Resources">
+                            <ul class="space-y-3">
+                                {% if footer_menu %}
+                                    {% for item in footer_menu.items.all %}
+                                        {% if not item.parent and forloop.counter > 3 %}
+                                            <li>
+                                                <a href="{{ item.get_url }}" 
+                                                   class="text-gray-300 hover:text-white transition-colors group focus:outline-none focus:text-white flex items-center"
+                                                   {% if item.target_blank %}target="_blank" rel="noopener"{% endif %}>
+                                                    <i class="fas fa-chevron-right text-xs mr-2 text-primary group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                                    <span>{{ item.title }}</span>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <li>
+                                        <a href="#" class="text-gray-300 hover:text-white transition-colors group focus:outline-none focus:text-white flex items-center">
+                                            <i class="fas fa-chevron-right text-xs mr-2 text-primary group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                            <span>Documentation</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="text-gray-300 hover:text-white transition-colors group focus:outline-none focus:text-white flex items-center">
+                                            <i class="fas fa-chevron-right text-xs mr-2 text-primary group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                            <span>Tutorials</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="text-gray-300 hover:text-white transition-colors group focus:outline-none focus:text-white flex items-center">
+                                            <i class="fas fa-chevron-right text-xs mr-2 text-primary group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                            <span>API Reference</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="text-gray-300 hover:text-white transition-colors group focus:outline-none focus:text-white flex items-center">
+                                            <i class="fas fa-chevron-right text-xs mr-2 text-primary group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true"></i>
+                                            <span>Support</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
                     {% endif %}
                 </div>
                 
-                <div class="md:col-span-1">
+                <!-- Contact Column -->
+                <div>
                     {% with template_name="widgets/footer_widget.html" %}
                         {% show_widget_area 'footer-right' %}
                     {% endwith %}
                     
                     {% if not widgets %}
-                        <h3 class="text-xl font-bold font-heading mb-6">Contact Us</h3>
+                        <h3 class="text-xl font-bold font-heading mb-6 pb-2 border-b border-primary/30">Contact Us</h3>
                         <ul class="space-y-4">
                             <li class="flex items-start">
-                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i>
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fas fa-map-marker-alt text-primary" aria-hidden="true"></i>
+                                </div>
                                 <span class="text-gray-300">123 Street Name, City, Country</span>
                             </li>
                             <li class="flex items-center">
-                                <i class="fas fa-envelope mr-3 text-primary"></i>
-                                <a href="mailto:info@example.com" class="text-gray-300 hover:text-white transition-colors">info@example.com</a>
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fas fa-envelope text-primary" aria-hidden="true"></i>
+                                </div>
+                                <a href="mailto:info@example.com" class="text-gray-300 hover:text-white transition-colors focus:outline-none focus:text-white">info@example.com</a>
                             </li>
                             <li class="flex items-center">
-                                <i class="fas fa-phone-alt mr-3 text-primary"></i>
-                                <a href="tel:+1234567890" class="text-gray-300 hover:text-white transition-colors">+1 (234) 567-890</a>
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fas fa-phone-alt text-primary" aria-hidden="true"></i>
+                                </div>
+                                <a href="tel:+1234567890" class="text-gray-300 hover:text-white transition-colors focus:outline-none focus:text-white">+1 (234) 567-890</a>
                             </li>
                         </ul>
-                        
-                        <div class="mt-6">
-                            <h4 class="font-bold mb-3">Subscribe to Newsletter</h4>
-                            <form class="flex">
-                                <input type="email" placeholder="Your email" class="flex-grow px-4 py-2 rounded-l-lg focus:outline-none">
-                                <button type="submit" class="btn-primary rounded-r-lg rounded-l-none">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </form>
+                    {% endif %}
+                </div>
+                
+                <!-- Social Media Column -->
+                <div>
+                    {% with template_name="widgets/footer_widget.html" %}
+                        {% show_widget_area 'footer-left' %}
+                    {% endwith %}
+                    
+                    {% if not widgets %}
+                        <h3 class="text-xl font-bold font-heading mb-6 pb-2 border-b border-primary/30">Follow Us</h3>
+                        <div class="grid grid-cols-2 gap-3" aria-label="Social media links">
+                            <a href="#" class="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors group focus:outline-none focus:ring-2 focus:ring-primary">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                    <i class="fab fa-twitter text-primary group-hover:scale-110 transition-transform duration-300" aria-hidden="true"></i>
+                                </div>
+                                <span class="text-gray-300 group-hover:text-white transition-colors">Twitter</span>
+                            </a>
+                            <a href="#" class="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors group focus:outline-none focus:ring-2 focus:ring-primary">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                    <i class="fab fa-facebook-f text-primary group-hover:scale-110 transition-transform duration-300" aria-hidden="true"></i>
+                                </div>
+                                <span class="text-gray-300 group-hover:text-white transition-colors">Facebook</span>
+                            </a>
+                            <a href="#" class="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors group focus:outline-none focus:ring-2 focus:ring-primary">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                    <i class="fab fa-instagram text-primary group-hover:scale-110 transition-transform duration-300" aria-hidden="true"></i>
+                                </div>
+                                <span class="text-gray-300 group-hover:text-white transition-colors">Instagram</span>
+                            </a>
+                            <a href="#" class="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors group focus:outline-none focus:ring-2 focus:ring-primary">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                    <i class="fab fa-github text-primary group-hover:scale-110 transition-transform duration-300" aria-hidden="true"></i>
+                                </div>
+                                <span class="text-gray-300 group-hover:text-white transition-colors">GitHub</span>
+                            </a>
                         </div>
                     {% endif %}
                 </div>
             </div>
             
-            <div class="mt-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center text-gray-400">
-                <p>&copy; {% now "Y" %} djCMS. All rights reserved.</p>
-                <div class="mt-4 md:mt-0">
-                    <a href="#" class="text-gray-400 hover:text-white mx-2 transition-colors">Privacy Policy</a>
-                    <a href="#" class="text-gray-400 hover:text-white mx-2 transition-colors">Terms of Service</a>
-                    <a href="#" class="text-gray-400 hover:text-white mx-2 transition-colors">Cookie Policy</a>
-                </div>
+            <!-- Footer Bottom Section -->
+            <div class="pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">&copy; {% now "Y" %} djCMS. All rights reserved.</p>
+                <nav aria-label="Legal links" class="mt-4 md:mt-0">
+                    <div class="flex flex-wrap justify-center gap-x-6">
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors focus:outline-none focus:text-white">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors focus:outline-none focus:text-white">Terms of Service</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors focus:outline-none focus:text-white">Cookie Policy</a>
+                    </div>
+                </nav>
             </div>
         </div>
     </footer>
     
+    <!-- Service Worker Registration for PWA -->
+    <script>
+        // Register Service Worker for PWA support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/js/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+    
     <!-- Custom JavaScript -->
     <script>
-        // Mobile menu toggle with animation
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-            
-            // Toggle icon between bars and X
-            const icon = this.querySelector('i');
-            if (icon.classList.contains('fa-bars')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-        
-        // Add scroll effects
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('header');
-            const scrollTop = window.scrollY;
-            
-            // Add shadow and reduce padding on scroll
-            if (scrollTop > 10) {
-                header.classList.add('py-2');
-                header.classList.remove('py-3');
-                header.classList.add('shadow-elevated');
-            } else {
-                header.classList.remove('py-2');
-                header.classList.add('py-3');
-                header.classList.remove('shadow-elevated');
-            }
-        });
-        
-        // Animate elements when they come into view
         document.addEventListener('DOMContentLoaded', function() {
-            const animateElements = document.querySelectorAll('.card, .btn, h1, h2, h3');
+            // Mobile menu toggle with animation
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+            const closeMobileMenuButton = document.getElementById('close-mobile-menu');
             
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animate-fade-in');
-                        observer.unobserve(entry.target);
+            if (mobileMenuButton && mobileMenu && mobileMenuBackdrop) {
+                // Open mobile menu
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenuBackdrop.classList.remove('hidden');
+                    // Use setTimeout to ensure the backdrop is visible before animating the menu
+                    setTimeout(() => {
+                        mobileMenu.classList.remove('translate-x-full');
+                    }, 50);
+                    this.setAttribute('aria-expanded', 'true');
+                    // Prevent body scrolling
+                    document.body.classList.add('overflow-hidden');
+                });
+                
+                // Close mobile menu function
+                const closeMobileMenu = function() {
+                    mobileMenu.classList.add('translate-x-full');
+                    // Wait for animation to complete before hiding backdrop
+                    setTimeout(() => {
+                        mobileMenuBackdrop.classList.add('hidden');
+                    }, 300);
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    // Re-enable body scrolling
+                    document.body.classList.remove('overflow-hidden');
+                };
+                
+                // Close button click
+                if (closeMobileMenuButton) {
+                    closeMobileMenuButton.addEventListener('click', closeMobileMenu);
+                }
+                
+                // Close when clicking on backdrop
+                mobileMenuBackdrop.addEventListener('click', function(event) {
+                    if (event.target === mobileMenuBackdrop) {
+                        closeMobileMenu();
                     }
                 });
-            }, { threshold: 0.1 });
+                
+                // Handle escape key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && !mobileMenuBackdrop.classList.contains('hidden')) {
+                        closeMobileMenu();
+                    }
+                });
+                
+                // Mobile dropdown toggles
+                const mobileDropdownToggles = document.querySelectorAll('.mobile-dropdown-toggle');
+                mobileDropdownToggles.forEach(toggle => {
+                    toggle.addEventListener('click', function() {
+                        const dropdownMenu = this.nextElementSibling;
+                        const icon = this.querySelector('i');
+                        
+                        if (dropdownMenu && dropdownMenu.classList.contains('mobile-dropdown-menu')) {
+                            dropdownMenu.classList.toggle('hidden');
+                            if (icon) {
+                                icon.classList.toggle('rotate-180');
+                            }
+                        }
+                    });
+                });
+            }
             
-            animateElements.forEach(element => {
-                observer.observe(element);
+            // Search modal functionality
+            const searchButton = document.getElementById('search-button');
+            const searchModal = document.getElementById('search-modal');
+            const closeSearchButton = document.getElementById('close-search');
+            const modalSearch = document.getElementById('modal-search');
+            
+            if (searchButton && searchModal) {
+                // Open search modal
+                searchButton.addEventListener('click', function() {
+                    searchModal.classList.remove('hidden');
+                    // Focus the search input after a short delay to ensure modal is visible
+                    setTimeout(() => {
+                        if (modalSearch) modalSearch.focus();
+                    }, 100);
+                    // Prevent body scrolling
+                    document.body.classList.add('overflow-hidden');
+                });
+                
+                // Close search modal function
+                const closeSearchModal = function() {
+                    searchModal.classList.add('hidden');
+                    // Re-enable body scrolling
+                    document.body.classList.remove('overflow-hidden');
+                };
+                
+                // Close button click
+                if (closeSearchButton) {
+                    closeSearchButton.addEventListener('click', closeSearchModal);
+                }
+                
+                // Close when clicking outside the modal content
+                searchModal.addEventListener('click', function(event) {
+                    if (event.target === searchModal) {
+                        closeSearchModal();
+                    }
+                });
+                
+                // Handle escape key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+                        closeSearchModal();
+                    }
+                });
+            }
+            
+            // User menu dropdown functionality
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdownMenu = document.getElementById('user-dropdown-menu');
+            const userMenuArrow = document.getElementById('user-menu-arrow');
+            
+            if (userMenuButton && userDropdownMenu) {
+                userMenuButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    userDropdownMenu.classList.toggle('hidden');
+                    if (userMenuArrow) {
+                        userMenuArrow.classList.toggle('rotate-180');
+                    }
+                    
+                    // Set aria-expanded attribute
+                    const expanded = userMenuButton.getAttribute('aria-expanded') === 'true' || false;
+                    userMenuButton.setAttribute('aria-expanded', !expanded);
+                });
+                
+                // Close when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userDropdownMenu.contains(event.target)) {
+                        userDropdownMenu.classList.add('hidden');
+                        if (userMenuArrow) {
+                            userMenuArrow.classList.remove('rotate-180');
+                        }
+                        userMenuButton.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                
+                // Close on escape key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && !userDropdownMenu.classList.contains('hidden')) {
+                        userDropdownMenu.classList.add('hidden');
+                        if (userMenuArrow) {
+                            userMenuArrow.classList.remove('rotate-180');
+                        }
+                        userMenuButton.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+            
+            // Back to top button functionality
+            const backToTopButton = document.getElementById('back-to-top');
+            
+            if (backToTopButton) {
+                // Show/hide back to top button based on scroll position
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 300) {
+                        backToTopButton.classList.remove('scale-0');
+                        backToTopButton.classList.add('scale-100');
+                    } else {
+                        backToTopButton.classList.remove('scale-100');
+                        backToTopButton.classList.add('scale-0');
+                    }
+                });
+                
+                // Scroll to top when button is clicked
+                backToTopButton.addEventListener('click', function() {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+            
+            // Add scroll effects to header
+            const header = document.querySelector('header');
+            
+            if (header) {
+                const handleScroll = function() {
+                    const scrollTop = window.scrollY;
+                    
+                    // Add shadow and reduce padding on scroll
+                    if (scrollTop > 10) {
+                        header.classList.add('py-2');
+                        header.classList.remove('py-3');
+                        header.classList.add('shadow-elevated');
+                        header.classList.add('bg-white/95');
+                    } else {
+                        header.classList.remove('py-2');
+                        header.classList.add('py-3');
+                        header.classList.remove('shadow-elevated');
+                        header.classList.remove('bg-white/95');
+                    }
+                };
+                
+                window.addEventListener('scroll', handleScroll);
+                // Initial call to set correct state on page load
+                handleScroll();
+            }
+            
+            // Animate elements when they come into view
+            if ('IntersectionObserver' in window) {
+                const animateElements = document.querySelectorAll('.card, .btn, h1, h2, h3, .animate-on-scroll');
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate-fade-in');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { 
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                });
+                
+                animateElements.forEach(element => {
+                    observer.observe(element);
+                });
+            }
+            
+            // Add keyboard navigation for dropdown menus
+            const dropdownMenus = document.querySelectorAll('.group');
+            
+            dropdownMenus.forEach(menu => {
+                const trigger = menu.querySelector('[aria-haspopup="true"]');
+                const dropdown = menu.querySelector('[role="menu"]');
+                
+                if (trigger && dropdown) {
+                    // Handle keyboard navigation
+                    trigger.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            
+                            // Show dropdown
+                            dropdown.classList.add('opacity-100', 'visible', 'translate-y-0');
+                            dropdown.classList.remove('opacity-0', 'invisible', 'translate-y-2');
+                            
+                            // Focus first item
+                            const firstItem = dropdown.querySelector('[role="menuitem"]');
+                            if (firstItem) firstItem.focus();
+                            
+                            trigger.setAttribute('aria-expanded', 'true');
+                        }
+                    });
+                    
+                    // Handle keyboard navigation within dropdown
+                    dropdown.addEventListener('keydown', function(e) {
+                        const menuItems = dropdown.querySelectorAll('[role="menuitem"]');
+                        const currentIndex = Array.from(menuItems).indexOf(document.activeElement);
+                        
+                        if (e.key === 'Escape') {
+                            // Close dropdown and focus trigger
+                            dropdown.classList.remove('opacity-100', 'visible', 'translate-y-0');
+                            dropdown.classList.add('opacity-0', 'invisible', 'translate-y-2');
+                            trigger.setAttribute('aria-expanded', 'false');
+                            trigger.focus();
+                        } else if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            const nextIndex = (currentIndex + 1) % menuItems.length;
+                            menuItems[nextIndex].focus();
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            const prevIndex = (currentIndex - 1 + menuItems.length) % menuItems.length;
+                            menuItems[prevIndex].focus();
+                        }
+                    });
+                    
+                    // Close dropdown when focus leaves
+                    menu.addEventListener('focusout', function(e) {
+                        if (!menu.contains(e.relatedTarget)) {
+                            dropdown.classList.remove('opacity-100', 'visible', 'translate-y-0');
+                            dropdown.classList.add('opacity-0', 'invisible', 'translate-y-2');
+                            trigger.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+                }
             });
+            
+            // Add smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        e.preventDefault();
+                        
+                        const headerOffset = header ? header.offsetHeight : 0;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset - 20;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Update URL without page jump
+                        history.pushState(null, null, targetId);
+                        
+                        // Set focus to the target element
+                        targetElement.setAttribute('tabindex', '-1');
+                        targetElement.focus({ preventScroll: true });
+                    }
+                });
+            });
+        });
+        
+        // Add support for prefers-reduced-motion
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        
+        if (prefersReducedMotion.matches) {
+            document.documentElement.classList.add('no-animation');
+            
+            // Add a style element to disable animations
+            const style = document.createElement('style');
+            style.textContent = `
+                .no-animation * {
+                    animation: none !important;
+                    transition: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Add dark mode support if theme supports it
+        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        function setDarkModeClass(darkMode) {
+            if (darkMode) {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+        }
+        
+        // Set initial dark mode state
+        setDarkModeClass(prefersDarkMode.matches);
+        
+        // Listen for changes in dark mode preference
+        prefersDarkMode.addEventListener('change', (e) => {
+            setDarkModeClass(e.matches);
         });
         
         {% if theme.custom_js %}{{ theme.custom_js|safe }}{% endif %}

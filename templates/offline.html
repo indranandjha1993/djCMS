@@ -1,92 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>You're Offline - djCMS</title>
-    <style>
-        :root {
-            --primary: #4F46E5;
-            --primary-dark: #4338CA;
-            --gray-800: #1F2937;
-            --gray-700: #374151;
-            --gray-500: #6B7280;
-            --gray-200: #E5E7EB;
-            --gray-100: #F3F4F6;
-        }
-        
-        body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--gray-100);
-            color: var(--gray-700);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .container {
-            max-width: 500px;
-            background-color: white;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
-        h1 {
-            color: var(--gray-800);
-            font-size: 24px;
-            margin-bottom: 16px;
-        }
-        
-        p {
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-        
-        .icon {
-            font-size: 64px;
-            margin-bottom: 24px;
-            color: var(--primary);
-        }
-        
-        .button {
-            display: inline-block;
-            background-color: var(--primary);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-        
-        .button:hover {
-            background-color: var(--primary-dark);
-        }
-        
-        @media (max-width: 640px) {
-            .container {
-                padding: 24px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-            </svg>
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}You're Offline - djCMS{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-12">
+    <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-8 md:p-10 animate-fade-in">
+        <div class="text-center">
+            <div class="text-primary w-20 h-20 mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m-3.536-3.536a5 5 0 010-7.072m-3.182 3.182a1 1 0 11-1.414-1.414m1.414 1.414L5.636 18.364" />
+                </svg>
+            </div>
+            
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">You're currently offline</h1>
+            
+            <p class="text-gray-600 mb-6">
+                It looks like you've lost your internet connection. Please check your connection and try again.
+            </p>
+            
+            <p class="text-gray-600 mb-8">
+                Some features of djCMS are available offline, but for the best experience, please reconnect to the internet.
+            </p>
+            
+            <button id="reload-button" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+                Try Again
+            </button>
         </div>
-        <h1>You're currently offline</h1>
-        <p>It looks like you've lost your internet connection. Please check your connection and try again.</p>
-        <p>Some features of djCMS are available offline, but for the best experience, please reconnect to the internet.</p>
-        <a href="/" class="button">Try Again</a>
     </div>
-</body>
-</html>
+</div>
+
+<script>
+    document.getElementById('reload-button').addEventListener('click', function() {
+        window.location.reload();
+    });
+</script>
+{% endblock %}

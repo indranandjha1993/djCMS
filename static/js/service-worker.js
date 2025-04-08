@@ -5,9 +5,10 @@ const ASSETS_TO_CACHE = [
   '/',
   '/offline/',
   '/static/css/styles.css',
+  '/static/css/custom.css',
   '/static/js/main.js',
-  '/static/img/logo.png',
-  '/static/manifest.json'
+  '/static/manifest.json',
+  '/static/favicon.ico'
 ];
 
 // Install event - cache assets
@@ -16,7 +17,13 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Opened cache');
-        return cache.addAll(ASSETS_TO_CACHE);
+        // First try to cache what we can
+        return cache.addAll(ASSETS_TO_CACHE)
+          .catch(error => {
+            console.log('Some assets failed to cache, but continuing anyway:', error);
+            // Even if some assets fail, we still want to cache the homepage
+            return cache.add(new Request('/'));
+          });
       })
       .then(() => self.skipWaiting())
   );

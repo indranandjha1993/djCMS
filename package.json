@@ -1,0 +1,31 @@
+{
+  "name": "djcms",
+  "version": "1.0.0",
+  "description": "A CMS built with Django",
+  "scripts": {
+    "build": "tailwindcss -i ./static/css/tailwind.css -o ./static/css/styles.css",
+    "build:prod": "NODE_ENV=production tailwindcss -i ./static/css/tailwind.css -o ./static/css/styles.css --minify",
+    "watch": "tailwindcss -i ./static/css/tailwind.css -o ./static/css/styles.css --watch",
+    "dev": "npm run watch",
+    "clean": "rm -f ./static/css/styles.css ./static/css/styles.css.map",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "django",
+    "cms",
+    "tailwindcss"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "postcss-import": "^15.1.0",
+    "postcss-nesting": "^12.0.1",
+    "cssnano": "^6.0.1",
+    "tailwindcss": "^3.3.5"
+  }
+}

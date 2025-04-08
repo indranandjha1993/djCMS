@@ -132,6 +132,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom user model
 AUTH_USER_MODEL = 'core.User'
 
+# Authentication settings
+LOGIN_REDIRECT_URL = 'core:profile'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'core:login'
+
 # SEO settings
 SITE_ID = 1
 

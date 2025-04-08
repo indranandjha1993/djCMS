@@ -27,7 +27,7 @@ urlpatterns = [
     
     # Include app URLs
     path('', include('pages.urls')),
-    path('', include('core.urls')),
+    path('', include('core.urls', namespace='core')),
     path('categories/', include('categories.urls')),
     path('media-library/', include('media_library.urls')),
     path('comments/', include('comments.urls')),

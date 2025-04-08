@@ -17,6 +17,7 @@ urlpatterns = [
     # Authentication
     path('login/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
+    path('register/', views.UserRegistrationView.as_view(), name='register'),
     path('password-change/', auth_views.PasswordChangeView.as_view(
         template_name='core/password_change.html',
         success_url='/profile/'
@@ -37,4 +38,7 @@ urlpatterns = [
     path('password-reset/complete/', auth_views.PasswordResetCompleteView.as_view(
         template_name='core/password_reset_complete.html'
     ), name='password_reset_complete'),
+    
+    # PWA
+    path('offline/', views.offline_view, name='offline'),
 ]

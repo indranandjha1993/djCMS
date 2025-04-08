@@ -58,7 +58,7 @@
                         
                         <div class="text-sm text-gray-500 mb-3">
                             {{ post.published_at|date:"F j, Y" }} • 
-                            <a href="{% url 'blog:author_detail' post.author.username %}" class="hover:text-primary transition-colors">
+                            <a href="{% url 'blog:author_post_list' post.author.username %}" class="hover:text-primary transition-colors">
                                 {{ post.author.get_full_name|default:post.author.username }}
                             </a>
                         </div>
